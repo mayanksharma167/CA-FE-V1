@@ -258,16 +258,20 @@ const AboutPage = () => {
 
             {/* Testimonials Section */}
             {/* Animated Testimonials Section */}
-            <section className="py-20 relative overflow-hidden">
-                <div className="max-w-7xl mx-auto">
-                    <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-16">
+            {/* Animated Testimonials Section */}
+            <section className="py-16 sm:py-20 relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Heading */}
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-white mb-10 sm:mb-16">
                         <span className="bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
                             What Our Users Say
                         </span>
                     </h2>
+                    {/* Infinite Scroll Component */}
                     <InfiniteScrollTestimonials />
                 </div>
             </section>
+
 
             {/* Technology Section */}
             <section className="py-20 bg-gradient-to-br from-emerald-900/10 via-gray-900/10 to-black/10">
