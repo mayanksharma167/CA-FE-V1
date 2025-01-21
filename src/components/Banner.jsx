@@ -5,50 +5,51 @@ import { motion } from 'framer-motion';
 const InfiniteScrollTestimonials = () => {
   const testimonials = [
     {
-      name: "Gabriel Frasconi",
-      role: "Vice President at Zendesk",
-      comment: "We had massive success using lemlist. When you work with a good company, and they help you become more successful, I can just highly recommend them.",
+      name: "Rahul Mehta",
+      role: "Software Engineer at Infosys",
+      comment: "The AI resume builder is a game-changer! It created a professional, ATS-friendly resume that landed me 5 interviews in just two weeks. Highly recommended!",
       metrics: {
-        replyRate: "40%",
-        meetings: "200+",
-        revenue: "$750K"
+        successRate: "90%",
+        interviews: "5+",
+        offers: "2"
       },
-      image: "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?t=st=1737356591~exp=1737360191~hmac=5f073b54f2b5ce68a144ca0372127c1c4eaac8897a8fa2c6d4c5bfbf4760ab1d&w=826"
+      image: "https://img.freepik.com/free-psd/3d-illustration-person-with-laptop_23-2149436189.jpg"
     },
     {
-      name: "Alla Zeitoun",
-      role: "Global Strategic at Meero",
-      comment: "lemlist is so simple to use, easy to connect with your CRM, and the automation features will save you a lot of time.",
+      name: "Priya Sharma",
+      role: "Marketing Specialist at Flipkart",
+      comment: "I was struggling to optimize my resume for ATS. This tool made the entire process seamless and helped me secure my dream job. The custom suggestions were spot-on!",
       metrics: {
-        replyRate: "35%",
-        meetings: "100+",
-        revenue: "$1.1M+"
+        successRate: "85%",
+        interviews: "7+",
+        offers: "3"
       },
-      image: "https://img.freepik.com/free-psd/3d-illustration-person_23-2149436192.jpg?t=st=1737356627~exp=1737360227~hmac=3bb4cc00ce8d7414454a86ee5147235d5236d20320ac6f49e64e2c1d3071d52e&w=826"
+      image: "https://img.freepik.com/free-psd/3d-illustration-person-with-long-hair_23-2149436197.jpg?t=st=1737452596~exp=1737456196~hmac=95a11b584786c80c9f081287aa6b9dc983b3fd3437fb0a97da966ae9d5cf39f7&w=740"
     },
     {
-      name: "Nick Dunse",
-      role: "CRO at Shuttle",
-      comment: "lemlist is our cold email battleship. Personalization, automation, deliverability... everything you need to get more replies is there.",
+      name: "Arjun Patel",
+      role: "Business Analyst at Deloitte",
+      comment: "The website’s AI-generated tips on enhancing my resume were incredibly accurate. It saved me so much time and increased my interview calls significantly.",
       metrics: {
-        replyRate: "30%",
-        meetings: "70+",
-        revenue: "$100K+"
+        successRate: "88%",
+        interviews: "8+",
+        offers: "3"
       },
-      image: "https://img.freepik.com/free-psd/3d-illustration-person-with-glasses_23-2149436190.jpg?t=st=1737356667~exp=1737360267~hmac=62349c39fa084614130403cd49b235278bebfb2e222b8bde8f7b34da3396d98c&w=826"
+      image: "https://img.freepik.com/free-psd/3d-illustration-smiling-man_23-2149436187.jpg"
     },
     {
-      name: "Xavière Lehning",
-      role: "Business Developer at Tikeden",
-      comment: "Our stats are great, the tool is super easy to use and makes prospecting 100x times more responsive.",
+      name: "Simran Kaur",
+      role: "Data Scientist at Microsoft",
+      comment: "This platform helped me create a resume that passed ATS filters with ease. The personalized formatting and keyword suggestions are unbeatable.",
       metrics: {
-        replyRate: "37%",
-        meetings: "100+",
-        revenue: "$200K+"
+        successRate: "92%",
+        interviews: "10+",
+        offers: "4"
       },
-      image: "https://img.freepik.com/free-psd/3d-illustration-person-with-long-hair_23-2149436197.jpg?t=st=1737356629~exp=1737360229~hmac=05c83ca5a8f232b8a9067fc973491d839819c48c1321ae1eb9c27e0772465e09&w=826"
+      image: "https://img.freepik.com/free-psd/3d-illustration-person-with-pink-hair_23-2149436186.jpg?t=st=1737452679~exp=1737456279~hmac=541c596ea885e17689b945f596e49a1dd598ce15b3c17b74f57a4b62f03e8c4e&w=740"
     }
   ];
+
 
   const TestimonialCard = ({ testimonial }) => (
     <div className="min-w-[300px] md:min-w-[400px] p-6 mx-4 bg-gradient-to-br from-gray-800/90 via-gray-900/90 to-black/90 rounded-xl backdrop-blur-sm hover:scale-[1.02] hover:shadow-2xl hover:shadow-emerald-500/20">
@@ -63,19 +64,19 @@ const InfiniteScrollTestimonials = () => {
           <p className="text-emerald-400 text-sm">{testimonial.role}</p>
         </div>
       </div>
-      <p className="mt-4 text-gray-300">{testimonial.comment}</p>
+      <p className="mt-4 text-gray-300"><i>"{testimonial.comment}"</i></p>
       <div className="mt-4 flex justify-between items-center gap-4">
         <div className="text-center">
-          <span className="text-emerald-400 font-bold block">{testimonial.metrics.replyRate}</span>
-          <span className="text-gray-400 text-sm">Reply Rate</span>
+          <span className="text-emerald-400 font-bold block">{testimonial.metrics.successRate}</span>
+          <span className="text-gray-400 text-sm">Success Rate</span>
         </div>
         <div className="text-center">
-          <span className="text-emerald-400 font-bold block">{testimonial.metrics.meetings}</span>
-          <span className="text-gray-400 text-sm">Meetings</span>
+          <span className="text-emerald-400 font-bold block">{testimonial.metrics.interviews}</span>
+          <span className="text-gray-400 text-sm">Interviews</span>
         </div>
         <div className="text-center">
-          <span className="text-emerald-400 font-bold block">{testimonial.metrics.revenue}</span>
-          <span className="text-gray-400 text-sm">Revenue</span>
+          <span className="text-emerald-400 font-bold block">{testimonial.metrics.offers}</span>
+          <span className="text-gray-400 text-sm">Offers</span>
         </div>
       </div>
     </div>
@@ -152,7 +153,7 @@ const Banner = () => {
             {/* Text Content */}
             <div className="space-y-6 md:space-y-8">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white">
-                Find your{" "}
+                Land your{" "}
                 <span className="bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent inline-block animate-bounce-slow">
                   dream job
                 </span>{" "}
