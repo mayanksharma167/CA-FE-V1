@@ -2,7 +2,108 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import './Banner.css';
 import { motion } from 'framer-motion';
+const InfiniteScrollTestimonials = () => {
+  const testimonials = [
+    {
+      name: "Gabriel Frasconi",
+      role: "Vice President at Zendesk",
+      comment: "We had massive success using lemlist. When you work with a good company, and they help you become more successful, I can just highly recommend them.",
+      metrics: {
+        replyRate: "40%",
+        meetings: "200+",
+        revenue: "$750K"
+      },
+      image: "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?t=st=1737356591~exp=1737360191~hmac=5f073b54f2b5ce68a144ca0372127c1c4eaac8897a8fa2c6d4c5bfbf4760ab1d&w=826"
+    },
+    {
+      name: "Alla Zeitoun",
+      role: "Global Strategic at Meero",
+      comment: "lemlist is so simple to use, easy to connect with your CRM, and the automation features will save you a lot of time.",
+      metrics: {
+        replyRate: "35%",
+        meetings: "100+",
+        revenue: "$1.1M+"
+      },
+      image: "https://img.freepik.com/free-psd/3d-illustration-person_23-2149436192.jpg?t=st=1737356627~exp=1737360227~hmac=3bb4cc00ce8d7414454a86ee5147235d5236d20320ac6f49e64e2c1d3071d52e&w=826"
+    },
+    {
+      name: "Nick Dunse",
+      role: "CRO at Shuttle",
+      comment: "lemlist is our cold email battleship. Personalization, automation, deliverability... everything you need to get more replies is there.",
+      metrics: {
+        replyRate: "30%",
+        meetings: "70+",
+        revenue: "$100K+"
+      },
+      image: "https://img.freepik.com/free-psd/3d-illustration-person-with-glasses_23-2149436190.jpg?t=st=1737356667~exp=1737360267~hmac=62349c39fa084614130403cd49b235278bebfb2e222b8bde8f7b34da3396d98c&w=826"
+    },
+    {
+      name: "Xavière Lehning",
+      role: "Business Developer at Tikeden",
+      comment: "Our stats are great, the tool is super easy to use and makes prospecting 100x times more responsive.",
+      metrics: {
+        replyRate: "37%",
+        meetings: "100+",
+        revenue: "$200K+"
+      },
+      image: "https://img.freepik.com/free-psd/3d-illustration-person-with-long-hair_23-2149436197.jpg?t=st=1737356629~exp=1737360229~hmac=05c83ca5a8f232b8a9067fc973491d839819c48c1321ae1eb9c27e0772465e09&w=826"
+    }
+  ];
 
+  const TestimonialCard = ({ testimonial }) => (
+    <div className="min-w-[300px] md:min-w-[400px] p-6 mx-4 bg-gradient-to-br from-gray-800/90 via-gray-900/90 to-black/90 rounded-xl backdrop-blur-sm hover:scale-[1.02] hover:shadow-2xl hover:shadow-emerald-500/20">
+      <div className="flex items-start space-x-4">
+        <img
+          src={testimonial.image}
+          alt={testimonial.name}
+          className="w-16 h-16 rounded-full object-cover"
+        />
+        <div className="flex-1">
+          <h4 className="text-lg font-semibold text-white">{testimonial.name}</h4>
+          <p className="text-emerald-400 text-sm">{testimonial.role}</p>
+        </div>
+      </div>
+      <p className="mt-4 text-gray-300">{testimonial.comment}</p>
+      <div className="mt-4 flex justify-between items-center gap-4">
+        <div className="text-center">
+          <span className="text-emerald-400 font-bold block">{testimonial.metrics.replyRate}</span>
+          <span className="text-gray-400 text-sm">Reply Rate</span>
+        </div>
+        <div className="text-center">
+          <span className="text-emerald-400 font-bold block">{testimonial.metrics.meetings}</span>
+          <span className="text-gray-400 text-sm">Meetings</span>
+        </div>
+        <div className="text-center">
+          <span className="text-emerald-400 font-bold block">{testimonial.metrics.revenue}</span>
+          <span className="text-gray-400 text-sm">Revenue</span>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="relative w-full overflow-hidden py-10">
+      {/* Left Gradient Mask */}
+      <div className="absolute left-0 top-0 h-full w-32 bg-gradient-to-r from-gray-950 to-transparent z-10"></div>
+
+      <div className="flex animate-scroll">
+
+        {/* First set of testimonials */}
+        {testimonials.map((testimonial, index) => (
+          <TestimonialCard key={`first-${index}`} testimonial={testimonial} />
+        ))}
+        {/* Duplicate set for seamless loop */}
+        {testimonials.map((testimonial, index) => (
+          <TestimonialCard key={`second-${index}`} testimonial={testimonial} />
+        ))}
+
+      </div>
+      {/* Right Gradient Mask */}
+      <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-gray-950 to-transparent z-10"></div>
+
+    </div>
+  );
+};
 const Banner = () => {
   const navigate = useNavigate();
   const [currentSvgIndex, setCurrentSvgIndex] = useState(0);
@@ -133,8 +234,21 @@ const Banner = () => {
           </div>
         </div>
       </div>
+      {/* Animated Testimonials Section */}
+      <section className="py-20 relative overflow-hidden">
+        <div className="max-w-[90%] mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-16">
+            <span className="bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
+              What Our Users Say
+            </span>
+          </h2>
+          <InfiniteScrollTestimonials />
+        </div>
+      </section>
     </section>
+
   );
+
 };
 
 export default React.memo(Banner);
