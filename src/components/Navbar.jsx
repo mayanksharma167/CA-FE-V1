@@ -33,7 +33,7 @@ const Navbar = () => {
         setIsLoggedIn(false);
         setUser(null);
         navigate('/');
-        window.location.reload();
+
 
       })
       .catch((error) => {
