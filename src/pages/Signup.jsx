@@ -36,6 +36,7 @@ export default function SignUp() {
                 console.log(data);
 
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data));
 
                 navigate('/jobs');
                 window.location.reload();
