@@ -65,7 +65,7 @@ const Card = ({ data }) => {
               </div>
               <div className="flex items-center gap-2">
                 <FiCalendar className="text-slate-900" />
-                <span>Posted: {postingDate}</span>
+                <span>Posted: {new Date(postingDate).toLocaleDateString()}</span>
               </div>
             </div>
           </div>

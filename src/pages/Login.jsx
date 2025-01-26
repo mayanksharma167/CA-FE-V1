@@ -1,16 +1,88 @@
-import { useState } from 'react';
-import { ArrowRight, Github, Laptop, Lock, Mail } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import { ArrowRight, Github, Laptop, Lock, Mail } from "lucide-react";
+import { motion } from "framer-motion";
 import { Player } from "@lottiefiles/react-lottie-player";
+import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URI}/api/v1/auth/google`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token: tokenResponse.code }),
+          }
+        );
+
+
+        const data = await response.json();
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        navigate('/jobs');
+        window.location.reload();
+
+      } catch (error) {
+        console.error('Google login failed:', error);
+        setError('Failed to log in with Google');
+      }
+    },
+    onError: (error) => {
+      console.error('Google Login Error:', error);
+      setError('Google Login failed');
+    },
+    flow: 'auth-code',
+  });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Add your login logic here
-    setTimeout(() => setLoading(false), 1000);
+    setError("");
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URI}/api/v1/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+
+
+        localStorage.setItem("token", data.token);
+        navigate("/jobs");
+        window.location.reload();
+      } else {
+        setError(data.message || "Invalid email or password.");
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -18,14 +90,10 @@ export default function Login() {
       {/* Left Column - Image/Design */}
       <div className="hidden lg:block w-1/2 bg-gradient-to-br from-black via-gray-900 to-emerald-900">
         <div className="h-full flex items-center justify-center p-12">
-          {/* <div className="grid grid-cols-2 gap-4 max-w-2xl">
-
-          </div> */}
-          {/* Lottie Animation */}
           <Player
             autoplay
             loop
-            src={"/cycle.json"} // Animation data file
+            src={"/cycle.json"}
             style={{ height: "100vh", width: "100vh" }}
           />
         </div>
@@ -44,6 +112,12 @@ export default function Login() {
           </motion.div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-600 text-white p-3 rounded-lg text-center">
+                {error}
+              </div>
+            )}
+
             <div className="space-y-4">
               <div>
                 <label className="text-gray-300 text-sm font-medium mb-1 block">
@@ -53,6 +127,8 @@ export default function Login() {
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <input
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                     className="w-full bg-gray-900 border border-gray-800 text-white px-10 py-3 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     placeholder="you@example.com"
@@ -68,6 +144,8 @@ export default function Login() {
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <input
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                     className="w-full bg-gray-900 border border-gray-800 text-white px-10 py-3 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     placeholder="••••••••"
@@ -108,8 +186,8 @@ export default function Login() {
               type="submit"
               disabled={loading}
               className={`w-full flex items-center justify-center py-3 px-4 rounded-lg text-white font-medium ${loading
-                ? 'bg-emerald-600 cursor-not-allowed'
-                : 'bg-emerald-500 hover:bg-emerald-600'
+                ? "bg-emerald-600 cursor-not-allowed"
+                : "bg-emerald-500 hover:bg-emerald-600"
                 } transition-all duration-200`}
             >
               {loading ? (
@@ -136,22 +214,23 @@ export default function Login() {
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
-                className="flex items-center justify-center py-3 px-4 rounded-lg border border-gray-800 hover:border-gray-600 transition-all duration-200"
+                className="flex items-center justify-center py-1 px-4 rounded-lg border border-gray-800 hover:border-gray-600 transition-all duration-200"
+                onClick={googleLogin}
               >
-                <Github className="h-5 w-5 text-white" />
-                <span className="ml-2 text-white">GitHub</span>
+                <img src="/g.png" alt="google" width={40} />
+                <span className="ml-2 text-white">Sign In</span>
               </button>
               <button
                 type="button"
                 className="flex items-center justify-center py-3 px-4 rounded-lg border border-gray-800 hover:border-gray-600 transition-all duration-200"
               >
-                <Laptop className="h-5 w-5 text-white" />
-                <span className="ml-2 text-white">Demo</span>
+                <Github className="h-5 w-5 text-white" />
+                <span className="ml-2 text-white">GitHub</span>
               </button>
             </div>
 
             <p className="text-center text-gray-400 text-sm">
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <a
                 href="/signup"
                 className="text-emerald-500 hover:text-emerald-400"

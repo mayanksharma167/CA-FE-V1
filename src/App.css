@@ -187,3 +187,39 @@ li {
 .create-job-input {
   @apply block w-full flex-1 bg-white py-1.5 pl-3 text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm sm:leading-6;
 }
+
+@keyframes scroll {
+  0% {
+    transform: translateX(100); /* Start at the beginning */
+  }
+  100% {
+    transform: translateX(
+      calc(-100)
+    ); /* End after all testimonials are scrolled */
+  }
+}
+
+.animate-scroll {
+  display: flex;
+  gap: 1rem; /* Maintain space between testimonials */
+  animation: scroll 10s linear infinite; /* Adjust speed for smoother scrolling */
+  will-change: scroll-position; /* Performance optimization */
+}
+
+@media (max-width: 1024px) {
+  .animate-scroll {
+    animation: scroll 10s linear infinite; /* Slower scrolling for tablet */
+  }
+}
+
+@media (max-width: 640px) {
+  .animate-scroll {
+    animation: scroll 10s linear infinite; /* Slower scrolling for mobile */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scroll {
+    animation: none; /* Disable animation for users with reduced motion preference */
+  }
+}

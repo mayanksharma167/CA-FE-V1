@@ -1,10 +1,13 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import './App.css';
 import { useEffect } from 'react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-const hideFooterRoutes = [" /home"];
+
+const hideFooterRoutes = ["/home"];
+
 function ScrollToTop() {
   const { pathname } = useLocation();
 
@@ -14,23 +17,22 @@ function ScrollToTop() {
 
   return null;
 }
-function App() {
 
+function App() {
   const location = useLocation();
 
   return (
-    <div className="app-container">
-      <Navbar />
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <div className="app-container">
+        <Navbar />
 
-      <div className="content">
-        <ScrollToTop />
-
-        <Outlet />
-
-        {!hideFooterRoutes.includes(location.pathname) && <Footer />}
+        <div className="content">
+          <ScrollToTop />
+          <Outlet />
+          {!hideFooterRoutes.includes(location.pathname) && <Footer />}
+        </div>
       </div>
-
-    </div >
+    </GoogleOAuthProvider>
   );
 }
 

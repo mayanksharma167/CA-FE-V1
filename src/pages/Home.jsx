@@ -16,24 +16,40 @@ const Home = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetch(`${import.meta.env.VITE_BACKEND_URI}/api/v1/jobs/all-jobs`)
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success && Array.isArray(response.data)) {
-          setJobs(response.data);
+    const fetchJobs = async () => {
+      setIsLoading(true);
+
+      // Fetch token (adjust storage mechanism as needed)
+      const token = localStorage.getItem("token"); // Or sessionStorage.getItem("token")
+
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/v1/jobs/all-jobs`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Add token here
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.success && Array.isArray(data.data)) {
+          setJobs(data.data);
         } else {
           setJobs([]);
-          console.error("Unexpected data format:", response);
+          console.error("Unexpected data format:", data);
         }
-        setIsLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching jobs:", error);
         setJobs([]);
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+
+    fetchJobs();
   }, []);
+
 
   const handleInputChange = (event) => {
     setQuery(event.target.value);

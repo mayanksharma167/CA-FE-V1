@@ -1,18 +1,40 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FaBarsStaggered, FaXmark } from "react-icons/fa6";
 import { BsStars } from "react-icons/bs";
 import { AuthContext } from "../context/AuthProvider";
 import './Banner.css';
+import { useNavigate } from "react-router-dom";
+import { reload } from "firebase/auth";
+
+
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logOut } = useContext(AuthContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const { logOut } = useContext(AuthContext);
+  const navigate = useNavigate();
+  // Check local storage for token and user on component mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setIsLoggedIn(!!token);
+  }, []);
 
   const handleLogout = () => {
     logOut()
       .then(() => {
-        // Sign-out successful.
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setIsLoggedIn(false);
+        setUser(null);
+        navigate('/');
+        window.location.reload();
+
       })
       .catch((error) => {
         console.log(error);
@@ -58,9 +80,6 @@ const Navbar = () => {
               </NavLink>
             </li>
           ))}
-
-          {/* AI Resume */}
-
         </ul>
 
         {/* Auth Navigation - Right */}
@@ -72,19 +91,39 @@ const Navbar = () => {
             >
               AI Resume
               <BsStars />
-
             </NavLink>
           </li>
-          {authNavItems.map(({ path, title }) => (
-            <li key={path} className="text-base text-white">
-              <NavLink
-                to={path}
-                className={({ isActive }) => (isActive ? "active" : "")}
-              >
-                {title}
-              </NavLink>
-            </li>
-          ))}
+
+          {isLoggedIn ? (
+            <>
+              <li>
+                <img
+                  src={user?.image || '/profile.png'}
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full mr-4"
+                />
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="text-white px-3 py-2 border-2 border-red-700 rounded-xl hover:bg-red-600 transition duration-200"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            authNavItems.map(({ path, title }) => (
+              <li key={path} className="text-base text-white">
+                <NavLink
+                  to={path}
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                >
+                  {title}
+                </NavLink>
+              </li>
+            ))
+          )}
         </ul>
 
         {/* Mobile Menu Button */}
@@ -119,24 +158,36 @@ const Navbar = () => {
             <NavLink
               to="/resume"
               onClick={handleMenuToggler}
-              className="flex items-center gap-2 text-white   "
+              className="flex items-center gap-2 text-white"
             >
-
               AI Resume
             </NavLink>
           </li>
 
-          {authNavItems.map(({ path, title }) => (
-            <li key={path} className="text-base text-white">
-              <NavLink
-                onClick={handleMenuToggler}
-                to={path}
-                className={({ isActive }) => (isActive ? "active" : "")}
-              >
-                {title}
-              </NavLink>
-            </li>
-          ))}
+          {isLoggedIn ? (
+            <>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="text-white"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            authNavItems.map(({ path, title }) => (
+              <li key={path} className="text-base text-white">
+                <NavLink
+                  onClick={handleMenuToggler}
+                  to={path}
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                >
+                  {title}
+                </NavLink>
+              </li>
+            ))
+          )}
         </ul>
       </div>
     </header>

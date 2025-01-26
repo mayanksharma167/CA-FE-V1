@@ -20,7 +20,16 @@ const MyJobs = () => {
       setError(null);
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/v1/jobs/my-jobs/${user.email}`);
+        const token = localStorage.getItem('token');
+        console.log(token.toString());
+
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/v1/jobs/my-jobs/${user.email}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+
+        });
 
         if (!response.ok) {
           throw new Error('Failed to fetch jobs');
@@ -28,7 +37,6 @@ const MyJobs = () => {
 
         const data = await response.json();
 
-        // Check if data is successful and contains the expected job data
         if (data.success && Array.isArray(data.data)) {
           setJobs(data.data);
           setFilteredJobs(data.data);
@@ -50,13 +58,18 @@ const MyJobs = () => {
       job.jobTitle.toLowerCase().includes(searchText.toLowerCase())
     );
     setFilteredJobs(filtered);
-    setCurrentPage(1); // Reset to first page on search
+    setCurrentPage(1);
   };
 
   const handleDelete = async (id) => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/v1/jobs/job/${id}`, {
         method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
 
       if (!response.ok) {
@@ -74,7 +87,6 @@ const MyJobs = () => {
     }
   };
 
-  // Pagination calculations
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentJobs = filteredJobs.slice(indexOfFirstItem, indexOfLastItem);

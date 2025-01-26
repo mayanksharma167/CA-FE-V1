@@ -47,6 +47,61 @@ const InfiniteScrollTestimonials = () => {
         offers: "4"
       },
       image: "https://img.freepik.com/free-psd/3d-illustration-person-with-pink-hair_23-2149436186.jpg"
+    },
+    {
+      name: "Akash Verma",
+      role: "UI/UX Designer at Zomato",
+      comment: "I was amazed by how intuitive and effective the AI resume builder is. The modern templates and ATS-friendly formatting got my resume noticed immediately!",
+      metrics: {
+        successRate: "95%",
+        interviews: "6+",
+        offers: "2"
+      },
+      image: "https://img.freepik.com/free-psd/3d-illustration-man-holding-tablet_23-2149436191.jpg"
+    },
+    {
+      name: "Neha Gupta",
+      role: "HR Manager at TCS",
+      comment: "The platform not only helped me polish my resume but also gave me actionable insights on what recruiters look for. A perfect tool for anyone serious about job hunting.",
+      metrics: {
+        successRate: "89%",
+        interviews: "8+",
+        offers: "3"
+      },
+      image: "https://img.freepik.com/free-psd/3d-illustration-businesswoman-smiling_23-2149436186.jpg"
+    },
+    {
+      name: "Siddharth Jain",
+      role: "Product Manager at Byju's",
+      comment: "The AI-powered suggestions were incredibly insightful, and the resume builder ensured my resume stood out among hundreds of applications. It's a must-have for professionals.",
+      metrics: {
+        successRate: "93%",
+        interviews: "10+",
+        offers: "4"
+      },
+      image: "https://img.freepik.com/free-psd/3d-illustration-man-with-tie_23-2149436195.jpg"
+    },
+    {
+      name: "Ananya Mishra",
+      role: "Content Writer at UrbanClap",
+      comment: "This platform completely transformed my resume. The ATS-friendly format ensured my application was shortlisted for every job I applied to. I couldn’t be happier!",
+      metrics: {
+        successRate: "90%",
+        interviews: "5+",
+        offers: "2"
+      },
+      image: "https://img.freepik.com/free-psd/3d-illustration-woman-with-long-hair_23-2149436185.jpg"
+    },
+    {
+      name: "Karan Singh",
+      role: "Data Engineer at Wipro",
+      comment: "I was blown away by the keyword optimization feature. It boosted my chances of getting noticed by recruiters, and I finally landed my dream role. Thanks to this amazing platform!",
+      metrics: {
+        successRate: "87%",
+        interviews: "7+",
+        offers: "3"
+      },
+      image: "https://img.freepik.com/free-psd/3d-illustration-smiling-man-with-folded-arms_23-2149436184.jpg"
     }
   ];
 
@@ -91,9 +146,9 @@ const InfiniteScrollTestimonials = () => {
         {testimonials.map((testimonial, index) => (
           <TestimonialCard key={`first-${index}`} testimonial={testimonial} />
         ))}
-        {/* Duplicate set for seamless loop */}
+        {/* second set of testimonials */}
         {testimonials.map((testimonial, index) => (
-          <TestimonialCard key={`second-${index}`} testimonial={testimonial} />
+          <TestimonialCard key={`first-${index}`} testimonial={testimonial} />
         ))}
       </div>
 
