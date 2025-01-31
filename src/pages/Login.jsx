@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, Github, Laptop, Lock, Mail } from "lucide-react";
+import { ArrowRight, Github, Laptop, Lock, Mail, Replace } from "lucide-react";
 import { motion } from "framer-motion";
 import { Player } from "@lottiefiles/react-lottie-player";
 import { useNavigate } from "react-router-dom";
@@ -73,7 +73,7 @@ export default function Login() {
 
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/jobs");
+        navigate("/jobs", { replace: true });
         window.location.reload();
       } else {
         setError(data.message || "Invalid email or password.");
