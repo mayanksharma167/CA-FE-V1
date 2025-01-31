@@ -2,7 +2,7 @@ import React from "react";
 
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
-import Home from "../pages/Home";
+import Home from "../pages/Home/components/Home";
 import MyJobs from "../pages/MyJobs";
 import SalaryPage from "../pages/SalaryPage";
 import CreateJob from "../pages/CreateJob";
@@ -15,6 +15,7 @@ import AboutPage from "../pages/AboutPage";
 import NotFound from "../pages/NotFound";
 import Resume from "../pages/Resume";
 import CareersPage from "../pages/CareersPage";
+import AIDashboard from "../components/AIDashboard";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <AboutPage />
+      },
+      {
+        path: "/ai",
+        element: <AIDashboard />
       },
       {
         path: "/resume",
