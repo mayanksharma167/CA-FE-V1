@@ -123,7 +123,7 @@ const NewsletterPopup = () => {
         className="w-[80%] sm:md:lg:xl:w-full h-96 max-w-2xl bg-cover bg-center rounded-xl shadow-2xl text-white py-14 px-8 relative flex flex-col items-center"
         style={{
           backgroundImage:
-            "url('https://img.freepik.com/free-vector/blue-green-patterned-background-vector_53876-77848.jpg?t=st=1738524454~exp=1738528054~hmac=aa119ba1eac6ed667f40b7bdd8e8b1d59a6dd490869c08f71a62252b4e852216&w=826')",
+            "url('https://img.freepik.com/free-vector/black-arrow-background-abstract-border-gold-design-vector_53876-143339.jpg?t=st=1738570135~exp=1738573735~hmac=39654db2a1e2ba4f32bd965d9fe8e2ac2f561b96a31b252bb3fad80c8970724a&w=1480')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -169,9 +169,8 @@ const NewsletterPopup = () => {
 
           {status.message && (
             <div
-              className={`mt-4 text-center p-2 rounded ${
-                status.type === "error" ? "text-red-500" : "text-green-500"
-              }`}
+              className={`mt-4 text-center p-2 rounded ${status.type === "error" ? "text-red-500" : "text-green-500"
+                }`}
             >
               {status.message}
             </div>

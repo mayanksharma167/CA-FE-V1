@@ -1,13 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { FaBarsStaggered, FaXmark } from "react-icons/fa6";
-import { ChevronDown, ChevronUp, Sun, Moon } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 
 import { BsStars } from "react-icons/bs";
 import { AuthContext } from "../context/AuthProvider";
 import './Banner.css';
 import { useNavigate } from "react-router-dom";
-import { reload } from "firebase/auth";
 import { ThemeContext } from "../context/themeContext";
 
 
@@ -72,7 +71,7 @@ const Navbar = () => {
         </div>
 
         {/* Main Navigation - Center */}
-        <ul className="hidden md:flex items-center gap-10 mx-auto ml-48 md:ml-32">
+        <ul className="hidden lg:md:flex items-center gap-10 mx-auto ml-48 lg:md:ml-32">
           {mainNavItems.map(({ path, title }) => (
             <li key={path} className="text-base text-white">
               <NavLink
@@ -86,8 +85,8 @@ const Navbar = () => {
         </ul>
 
         {/* Auth Navigation - Right */}
-        <ul className="hidden md:flex items-center gap-10">
-          <li className="flex relative justify-center right-20 items-center ml-60">
+        <ul className="hidden lg:flex items-center gap-6 justify-end">
+          <li className="flex items-center">
             <NavLink
               to="/resume"
               className="flex items-center gap-2 text-white px-3 py-2 border-2 border-emerald-700 rounded-xl hover:bg-emerald-600 hover:text-white transition duration-200"
@@ -95,23 +94,28 @@ const Navbar = () => {
               AI Resume
               <BsStars />
             </NavLink>
-
           </li>
-          <li><button
-            onClick={toggleTheme}
-            className={`p-2 rounded-full ${theme === "light" ? "bg-gray-200 hover:bg-gray-300 text-black " : "bg-emerald-800 hover:bg-emerald-700"
-              } transition-colors duration-300`}
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-          </button></li>
+
+          <li>
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-full transition-colors duration-300 ${theme === "light"
+                ? "bg-gray-200 hover:bg-gray-300 text-black"
+                : "bg-emerald-800 hover:bg-emerald-700"
+                }`}
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+            </button>
+          </li>
+
           {isLoggedIn ? (
             <>
               <li>
                 <img
                   src={user?.image || user?.user?.image}
                   alt="Profile"
-                  className="w-10 h-10 rounded-full mr-4"
+                  className="w-10 h-10 rounded-full"
                 />
               </li>
               <li>
@@ -125,10 +129,10 @@ const Navbar = () => {
             </>
           ) : (
             authNavItems.map(({ path, title }) => (
-              <li key={path} className="text-base text-white">
+              <li key={path}>
                 <NavLink
                   to={path}
-                  className={({ isActive }) => (isActive ? "active" : "")}
+                  className={({ isActive }) => (isActive ? "active" : "text-white")}
                 >
                   {title}
                 </NavLink>
@@ -137,8 +141,9 @@ const Navbar = () => {
           )}
         </ul>
 
+
         {/* Mobile Menu Button */}
-        <div className="md:hidden m-auto">
+        <div className="lg:hidden m-auto">
           <button
             onClick={toggleTheme}
             className={` p-2 rounded-full ${theme === "light" ? "bg-gray-200 hover:bg-gray-300 text-black " : "bg-emerald-800 hover:bg-emerald-700"
@@ -148,7 +153,7 @@ const Navbar = () => {
             {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
           </button>
         </div>
-        <div className="md:hidden ml-auto gap-5">
+        <div className="lg:hidden ml-auto gap-5">
 
           <button onClick={handleMenuToggler} className="p-2">
             {isMenuOpen ? (

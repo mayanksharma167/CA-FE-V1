@@ -83,7 +83,7 @@ const Sidebar = ({ handleChange }) => {
         {Object.keys(options).map((key) => (
           <div
             key={key}
-            className={`border ${theme === "light" ? "border-gray-300" : "border-emerald-700"
+            className={`border ${theme === "light" ? "border-gray-400" : "border-emerald-700"
               } rounded-lg`}
           >
             <button
