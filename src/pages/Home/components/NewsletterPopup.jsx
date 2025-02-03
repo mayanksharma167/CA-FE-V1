@@ -7,74 +7,54 @@ const NewsletterPopup = () => {
   const [status, setStatus] = useState({ type: "", message: "" });
 
   useEffect(() => {
-    // Function to check if it's a new session
-    const isNewSession = () => {
-      const lastVisit = localStorage.getItem("lastVisitTimestamp");
-      const currentTime = new Date().getTime();
+    // Check if user is already subscribed or logged in
+    const isSubscribed = localStorage.getItem("newsletterSubscribed") === "true";
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; // Replace with your actual auth check
 
-      // If there's no last visit or it's been more than 30 minutes
-      if (!lastVisit || currentTime - parseInt(lastVisit) > 30 * 60 * 1000) {
-        return true;
-      }
-      return false;
+    // Only show popup if user is on jobs page, not subscribed, and not logged in
+    const shouldShowPopup = () => {
+      const isJobsPage = window.location.pathname.includes('/jobs'); // Adjust based on your routing
+      return isJobsPage && !isSubscribed && !isLoggedIn;
     };
 
-    // Update last visit timestamp
-    const updateLastVisit = () => {
-      localStorage.setItem(
-        "lastVisitTimestamp",
-        new Date().getTime().toString()
-      );
-    };
+    let popupTimer;
 
-    // Check if it's a new session and popup hasn't been shown
-    if (isNewSession()) {
-      updateLastVisit();
-      const timer = setTimeout(() => {
+    // Show popup after 5 seconds if conditions are met
+    if (shouldShowPopup()) {
+      popupTimer = setTimeout(() => {
         setIsVisible(true);
-      }, 3000);
-
-      return () => clearTimeout(timer);
+      }, 5000); // 5 seconds delay
     }
-  }, []);
 
-  useEffect(() => {
-    // Update timestamp when component mounts
-    localStorage.setItem("lastVisitTimestamp", new Date().getTime().toString());
-
-    // Add event listener for when the page is hidden/visible
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        // Page is hidden (user switched tabs or minimized window)
-        localStorage.setItem("lastHidden", new Date().getTime().toString());
-      } else {
-        // Page is visible again
-        const lastHidden = localStorage.getItem("lastHidden");
-        if (lastHidden) {
-          const timeDiff = new Date().getTime() - parseInt(lastHidden);
-          // If the page was hidden for more than 30 minutes, consider it a new session
-          if (timeDiff > 30 * 60 * 1000) {
-            setIsVisible(true);
-            localStorage.setItem(
-              "lastVisitTimestamp",
-              new Date().getTime().toString()
-            );
-          }
+    // Add route change listener if you're using client-side routing
+    const handleRouteChange = () => {
+      if (shouldShowPopup()) {
+        // Clear any existing timer
+        if (popupTimer) {
+          clearTimeout(popupTimer);
         }
+        // Set new timer for 5 seconds
+        popupTimer = setTimeout(() => {
+          setIsVisible(true);
+        }, 5000);
+      } else {
+        setIsVisible(false);
       }
     };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
+    window.addEventListener('popstate', handleRouteChange);
+    
+    // Cleanup function
     return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener('popstate', handleRouteChange);
+      if (popupTimer) {
+        clearTimeout(popupTimer);
+      }
     };
   }, []);
 
   const handleClose = () => {
     setIsVisible(false);
-    // Update the timestamp when popup is closed
-    localStorage.setItem("lastVisitTimestamp", new Date().getTime().toString());
   };
 
   const handleSubmit = async (e) => {
@@ -91,10 +71,15 @@ const NewsletterPopup = () => {
     try {
       // Simulated API call - replace with your actual API endpoint
       // await subscribeToNewsletter(email);
+      
+      // Set subscription status in localStorage
+      localStorage.setItem("newsletterSubscribed", "true");
+      
       setStatus({
         type: "success",
         message: "Successfully subscribed! Thank you.",
       });
+      
       setTimeout(() => {
         handleClose();
       }, 2000);
@@ -122,13 +107,11 @@ const NewsletterPopup = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-[80%] sm:md:lg:xl:w-full h-96 max-w-2xl bg-cover bg-center rounded-xl shadow-2xl text-white py-14 px-8 relative flex flex-col items-center"
         style={{
-          backgroundImage:
-            "url('https://img.freepik.com/free-vector/black-arrow-background-abstract-border-gold-design-vector_53876-143339.jpg?t=st=1738570135~exp=1738573735~hmac=39654db2a1e2ba4f32bd965d9fe8e2ac2f561b96a31b252bb3fad80c8970724a&w=1480')",
+          backgroundImage: "url('./bgpop.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        {/* Rest of the JSX remains the same */}
         <button
           className="absolute top-4 right-4 text-gray-300 hover:text-white text-2xl font-bold"
           onClick={handleClose}
@@ -169,8 +152,9 @@ const NewsletterPopup = () => {
 
           {status.message && (
             <div
-              className={`mt-4 text-center p-2 rounded ${status.type === "error" ? "text-red-500" : "text-green-500"
-                }`}
+              className={`mt-4 text-center p-2 rounded ${
+                status.type === "error" ? "text-red-500" : "text-green-500"
+              }`}
             >
               {status.message}
             </div>
