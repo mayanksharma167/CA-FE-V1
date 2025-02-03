@@ -6,6 +6,25 @@
     <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Arrow Jobs</title>
+    <script defer>
+      // Set default theme to dark when the page loads
+      if (!localStorage.getItem("theme")) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.setAttribute(
+          "data-theme",
+          localStorage.getItem("theme")
+        );
+      }
+
+      // Toggle theme function
+      const toggleTheme = () => {
+        let currentTheme = document.documentElement.getAttribute("data-theme");
+        let newTheme = currentTheme === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme); // Save the theme preference
+      };
+    </script>
   </head>
   <body>
     <div id="root"></div>
