@@ -138,7 +138,7 @@ const Navbar = () => {
         </ul>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden m-auto ml-32">
+        <div className="md:hidden m-auto">
           <button
             onClick={toggleTheme}
             className={` p-2 rounded-full ${theme === "light" ? "bg-gray-200 hover:bg-gray-300 text-black " : "bg-emerald-800 hover:bg-emerald-700"
