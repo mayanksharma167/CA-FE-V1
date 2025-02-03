@@ -1,12 +1,14 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FaBarsStaggered, FaXmark } from "react-icons/fa6";
+import { ChevronDown, ChevronUp, Sun, Moon } from "lucide-react";
+
 import { BsStars } from "react-icons/bs";
 import { AuthContext } from "../context/AuthProvider";
 import './Banner.css';
 import { useNavigate } from "react-router-dom";
 import { reload } from "firebase/auth";
-
+import { ThemeContext } from "../context/themeContext";
 
 
 const Navbar = () => {
@@ -15,6 +17,7 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const { logOut } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useContext(ThemeContext);
   // Check local storage for token and user on component mount
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -83,7 +86,7 @@ const Navbar = () => {
         </ul>
 
         {/* Auth Navigation - Right */}
-        <ul className="hidden md:flex items-center gap-6">
+        <ul className="hidden md:flex items-center gap-10">
           <li className="flex relative justify-center right-20 items-center ml-60">
             <NavLink
               to="/resume"
@@ -92,8 +95,16 @@ const Navbar = () => {
               AI Resume
               <BsStars />
             </NavLink>
-          </li>
 
+          </li>
+          <li><button
+            onClick={toggleTheme}
+            className={`p-2 rounded-full ${theme === "light" ? "bg-gray-200 hover:bg-gray-300 text-black " : "bg-emerald-800 hover:bg-emerald-700"
+              } transition-colors duration-300`}
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+          </button></li>
           {isLoggedIn ? (
             <>
               <li>
@@ -127,7 +138,18 @@ const Navbar = () => {
         </ul>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden ml-auto">
+        <div className="md:hidden m-auto ml-32">
+          <button
+            onClick={toggleTheme}
+            className={` p-2 rounded-full ${theme === "light" ? "bg-gray-200 hover:bg-gray-300 text-black " : "bg-emerald-800 hover:bg-emerald-700"
+              } transition-colors duration-300`}
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+          </button>
+        </div>
+        <div className="md:hidden ml-auto gap-5">
+
           <button onClick={handleMenuToggler} className="p-2">
             {isMenuOpen ? (
               <FaXmark className="w-5 h-5 text-white" />
@@ -142,6 +164,9 @@ const Navbar = () => {
       <div className={`px-4 bg-black py-5 rounded-sm ${isMenuOpen ? "" : "hidden"}`}>
         <ul className="space-y-2">
           {mainNavItems.map(({ path, title }) => (
+            <li>
+
+            </li>,
             <li key={path} className="text-base text-white">
               <NavLink
                 onClick={handleMenuToggler}

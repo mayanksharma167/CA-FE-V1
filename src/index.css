@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark Theme */
+.body {
+  background-color: #1a1a1a;
+}
+:root {
+  --bg-color: #121212;
+  --text-color: #faf9f6;
+}
+:root 
+
+/* light Theme */
+[data-theme="dark"] {
+  --bg-color: #faf9f6;
+  --text-color: #000000;
+}
+/* Apply Theme Variables */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}

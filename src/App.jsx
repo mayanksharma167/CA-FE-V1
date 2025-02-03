@@ -1,10 +1,10 @@
-import { Outlet, useLocation } from 'react-router-dom';
-import './App.css';
-import { useEffect } from 'react';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import { Outlet, useLocation } from "react-router-dom";
+import "./App.css";
+import { useEffect, useContext } from "react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ThemeProvider, ThemeContext } from "./context/themeContext";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 const hideFooterRoutes = ["/home"];
 
@@ -18,20 +18,28 @@ function ScrollToTop() {
   return null;
 }
 
-function App() {
+function AppContent() {
   const location = useLocation();
+  const { theme } = useContext(ThemeContext); // Access theme context
 
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <div className="app-container">
-        <Navbar />
-
-        <div className="content">
-          <ScrollToTop />
-          <Outlet />
-          {!hideFooterRoutes.includes(location.pathname) && <Footer />}
-        </div>
+    <div className="app-container" data-theme={theme}>
+      <Navbar />
+      <div className="content">
+        <ScrollToTop />
+        <Outlet />
+        {!hideFooterRoutes.includes(location.pathname) && <Footer />}
       </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </GoogleOAuthProvider>
   );
 }

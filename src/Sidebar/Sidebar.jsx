@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { ChevronDown, ChevronUp, DollarSign, Calendar } from "lucide-react";
+import React, { useState, useContext } from "react";
+import { ChevronDown, ChevronUp, Sun, Moon } from "lucide-react";
+import { ThemeContext } from "../context/themeContext"; // Import your ThemeContext
 
-const Sidebar = ({ handleChange, handleClick }) => {
+const Sidebar = ({ handleChange }) => {
+  const { theme, toggleTheme } = useContext(ThemeContext); // Access theme and toggle function
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [selectedOptions, setSelectedOptions] = useState({
     location: "Location",
@@ -66,19 +68,37 @@ const Sidebar = ({ handleChange, handleClick }) => {
   };
 
   return (
-    <div className="h-[calc(100vh-2rem)] overflow-y-auto p-4 lg:pt-14 bg-slate-950 text-emerald-300">
+    <div
+      className={`h-[calc(100vh-2rem)] overflow-y-auto p-4 lg:pt-14 ${theme === "light" ? "bg-[#bbc4c2] text-gray-800" : "bg-slate-950 text-creamWhite"
+        }`}
+    >
       <div className="space-y-6">
-        <h3 className="text-xl font-bold mb-4 text-emerald-500">Filters</h3>
+        {/* Theme Toggle Button */}
+        <div className="flex justify-between items-center">
+          <h3 className="text-xl font-bold mb-4">Filters</h3>
+
+        </div>
+
+        {/* Dropdown Filters */}
         {Object.keys(options).map((key) => (
-          <div key={key} className="border border-emerald-700 rounded-lg w-">
+          <div
+            key={key}
+            className={`border ${theme === "light" ? "border-gray-300" : "border-emerald-700"
+              } rounded-lg`}
+          >
             <button
               onClick={() => toggleDropdown(key)}
-              className="w-full px-4 py-3 flex items-center justify-between hover:bg-emerald-900 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className={`w-full px-4 py-3 flex items-center justify-between ${theme === "light" ? "hover:bg-gray-200" : "hover:bg-emerald-900"
+                } rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 ${theme === "light" ? "focus:ring-gray-400" : "focus:ring-emerald-500"
+                }`}
+              aria-expanded={isDropdownOpen[key]}
+              aria-controls={`dropdown-${key}`}
             >
               <h4 className="text-lg font-medium">{selectedOptions[key]}</h4>
               {isDropdownOpen[key] ? <ChevronUp /> : <ChevronDown />}
             </button>
             <div
+              id={`dropdown-${key}`}
               className={`transition-all duration-300 overflow-hidden ${isDropdownOpen[key] ? "max-h-96 opacity-100 py-4" : "max-h-0 opacity-0 py-0"
                 }`}
             >
@@ -86,8 +106,11 @@ const Sidebar = ({ handleChange, handleClick }) => {
                 <div
                   key={option.value}
                   onClick={() => handleOptionSelect(key, option.value, option.label)}
-                  className={`cursor-pointer px-3 py-2 rounded-md transition-colors duration-300 hover:bg-emerald-800 flex items-center gap-2 ${selectedOptions[key] === option.label ? "bg-emerald-700" : ""
+                  className={`cursor-pointer px-3 py-2 rounded-md transition-colors duration-300 ${theme === "light" ? "hover:bg-gray-200" : "hover:bg-emerald-800"
+                    } flex items-center gap-2 ${selectedOptions[key] === option.label ? (theme === "light" ? "bg-gray-300" : "bg-emerald-700") : ""
                     }`}
+                  role="option"
+                  aria-selected={selectedOptions[key] === option.label}
                 >
                   <input
                     type="radio"
@@ -96,7 +119,7 @@ const Sidebar = ({ handleChange, handleClick }) => {
                     value={option.value}
                     checked={selectedOptions[key] === option.label}
                     readOnly
-                    className="accent-emerald-500"
+                    className={`accent-${theme === "light" ? "gray-500" : "emerald-500"}`}
                   />
                   <label htmlFor={`${key}-${option.value}`} className="cursor-pointer">
                     {option.label}

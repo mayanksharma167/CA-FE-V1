@@ -6,6 +6,7 @@ export default {
       colors: {
         primary: "#141414",
         green: "#228B22",
+        creamWhite: "#FAF9F6",
       },
     },
   },
