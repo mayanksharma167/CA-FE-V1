@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="./logo.png" />
-    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Arrow Jobs</title>
     <script defer>
@@ -24,6 +23,9 @@
         document.documentElement.setAttribute("data-theme", newTheme);
         localStorage.setItem("theme", newTheme); // Save the theme preference
       };
+
+      // Expose toggleTheme to global scope
+      window.toggleTheme = toggleTheme;
     </script>
   </head>
   <body>

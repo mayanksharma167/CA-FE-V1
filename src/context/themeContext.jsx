@@ -3,7 +3,7 @@ import { createContext, useState, useEffect } from "react";
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-    const storedTheme = localStorage.getItem("theme") || "light"; // Persist theme
+    const storedTheme = localStorage.getItem("theme") || "root"; // Persist theme
 
     const [theme, setTheme] = useState(storedTheme);
 
