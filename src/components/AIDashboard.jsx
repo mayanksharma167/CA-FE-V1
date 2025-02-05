@@ -1,86 +1,117 @@
-import React from 'react';
-import { ExternalLink, Search } from 'lucide-react';
-import { aiApps } from './aiApps';
-const AIDashboard = () => {
-    const [searchTerm, setSearchTerm] = React.useState('');
-    const [data, setData] = React.useState(aiApps);
+import React, { useState, useContext } from 'react';
+import { 
+    Book, 
+    Video, 
+    Users, 
+    Star, 
+    Award,
+    Globe,
+    Monitor,
+    Laptop,
+    School,
+    GraduationCap,
+    PenTool,
+    Music,
+    Camera,
+    Palette
+} from 'lucide-react';
+import { ThemeContext } from '../context/themeContext';
 
-    const filteredApps = React.useMemo(() => {
-        return data.reduce((acc, section) => {
-            const filteredItems = section.items.filter(item =>
-                item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.description.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            if (filteredItems.length > 0) {
-                acc.push({ ...section, items: filteredItems });
-            }
-            return acc;
-        }, []);
-    }, [data, searchTerm]);
+const EducationDirectory = () => {
+    const { theme } = useContext(ThemeContext);
+    const isDark = theme === 'dark';
 
-    return (
-        <div className="min-h-screen bg-gray-50 p-8">
-            <div className="max-w-7xl mx-auto">
-                <div className="mb-8">
-                    <h1 className="text-4xl font-bold mb-4">AI Apps Dashboard</h1>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search AI apps..."
-                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            value={searchTerm}
-                        />
-                    </div>
-                </div>
+    // Sample categories and resources
+    const premiumResources = [
+        { title: "Premium Math Courses", icon: <Book className="w-4 h-4" /> },
+        { title: "Advanced Science Labs", icon: <School className="w-4 h-4" /> },
+        { title: "Language Learning Pro", icon: <Globe className="w-4 h-4" /> },
+        { title: "Coding Bootcamps", icon: <Laptop className="w-4 h-4" /> },
+        { title: "Art & Design Master", icon: <PenTool className="w-4 h-4" /> }
+    ];
 
-                {filteredApps.map((section) => (
-                    <div key={section.category} className="mb-8">
-                        <h2 className="text-2xl font-semibold mb-4">{section.category}</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {section.items.map((app) => (
-                                <div
-                                    key={app.name}
-                                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6"
-                                >
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div>
-                                            <h3 className="text-xl font-semibold">{app.name}</h3>
-                                            {app.pricing && (
-                                                <span className="inline-block px-2 py-1 text-sm bg-blue-100 text-blue-800 rounded-full mt-1">
-                                                    {app.pricing}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <a
-                                            href={app.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                                        >
-                                            <ExternalLink className="h-5 w-5 text-gray-600" />
-                                        </a>
-                                    </div>
-                                    <p className="text-gray-600 mb-4">{app.description}</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {app.tags.map((tag) => (
-                                            <span
-                                                key={tag}
-                                                className="px-2 py-1 text-sm bg-gray-100 text-gray-600 rounded-full"
-                                            >
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+    const categories = [
+        "Mathematics",
+        "Science",
+        "Languages",
+        "Computer Science",
+        "Arts & Music",
+        "History",
+        "Literature",
+        "Physical Education",
+        "Social Studies",
+        "Engineering"
+    ];
+
+    const featuredContent = [
+        { title: "STEM Projects", icon: <Star className="w-4 h-4" /> },
+        { title: "Virtual Labs", icon: <Monitor className="w-4 h-4" /> },
+        { title: "Live Tutorials", icon: <Video className="w-4 h-4" /> },
+        { title: "Group Studies", icon: <Users className="w-4 h-4" /> }
+    ];
+
+    const popularResources = [
+        { title: "Math Games", icon: <GraduationCap className="w-4 h-4" /> },
+        { title: "Science Videos", icon: <Video className="w-4 h-4" /> },
+        { title: "Music Lessons", icon: <Music className="w-4 h-4" /> },
+        { title: "Photography", icon: <Camera className="w-4 h-4" /> },
+        { title: "Digital Art", icon: <Palette className="w-4 h-4" /> }
+    ];
+
+    const ListContainer = ({ title, items, maxHeight = "h-96" }) => (
+        <div className={`p-4 rounded-lg ${isDark ? 'bg-gray-800' : 'bg-white'} shadow`}>
+            <h2 className={`text-lg font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                {title}
+            </h2>
+            <div className={`overflow-y-auto ${maxHeight}`}>
+                {items.map((item, index) => (
+                    <div 
+                        key={index}
+                        className={`flex items-center p-2 mb-2 rounded ${
+                            isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                        } cursor-pointer`}
+                    >
+                        {item.icon}
+                        <span className={`ml-2 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                            {item.title || item}
+                        </span>
                     </div>
                 ))}
             </div>
         </div>
     );
+
+    return (
+        <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-100'} p-6`}>
+            <div className="max-w-7xl mx-auto">
+                <h1 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                    Educational Resources Directory
+                </h1>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <ListContainer 
+                        title="Premium Resources" 
+                        items={premiumResources}
+                    />
+                    
+                    <ListContainer 
+                        title="Categories" 
+                        items={categories.map(cat => ({ title: cat }))}
+                    />
+                    
+                    <ListContainer 
+                        title="Featured Content" 
+                        items={featuredContent}
+                    />
+                    
+                    <ListContainer 
+                        title="Popular Resources" 
+                        items={popularResources}
+                    />
+                </div>
+            </div>
+        </div>
+    );
 };
 
-export default AIDashboard;
+export default EducationDirectory;

@@ -7,52 +7,41 @@ const NewsletterPopup = () => {
   const [status, setStatus] = useState({ type: "", message: "" });
 
   useEffect(() => {
-    // Check if user is already subscribed or logged in
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem("token") !== null;
+  
+    // If logged in, immediately exit and ensure popup is not visible
+    if (isLoggedIn) {
+      setIsVisible(false);
+      return;
+    }
+  
+    // Check if already subscribed
     const isSubscribed = localStorage.getItem("newsletterSubscribed") === "true";
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; // Replace with your actual auth check
-
-    // Only show popup if user is on jobs page, not subscribed, and not logged in
+  
+    // Only show popup if on jobs page and not subscribed
     const shouldShowPopup = () => {
-      const isJobsPage = window.location.pathname.includes('/jobs'); // Adjust based on your routing
-      return isJobsPage && !isSubscribed && !isLoggedIn;
+      const isJobsPage = window.location.pathname.includes('/jobs');
+      return isJobsPage && !isSubscribed;
     };
-
+  
     let popupTimer;
-
+  
     // Show popup after 5 seconds if conditions are met
     if (shouldShowPopup()) {
       popupTimer = setTimeout(() => {
         setIsVisible(true);
-      }, 5000); // 5 seconds delay
+      }, 3000);
     }
-
-    // Add route change listener if you're using client-side routing
-    const handleRouteChange = () => {
-      if (shouldShowPopup()) {
-        // Clear any existing timer
-        if (popupTimer) {
-          clearTimeout(popupTimer);
-        }
-        // Set new timer for 5 seconds
-        popupTimer = setTimeout(() => {
-          setIsVisible(true);
-        }, 5000);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener('popstate', handleRouteChange);
-    
+  
     // Cleanup function
     return () => {
-      window.removeEventListener('popstate', handleRouteChange);
       if (popupTimer) {
         clearTimeout(popupTimer);
       }
     };
   }, []);
-
+  
   const handleClose = () => {
     setIsVisible(false);
   };
