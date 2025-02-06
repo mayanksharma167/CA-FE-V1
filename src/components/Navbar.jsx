@@ -80,7 +80,7 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="flex items-center justify-between h-16">
+        <nav className="flex items-center justify-between h-14">
           {/* Logo Section */}
           <div className="flex-shrink-0 flex items-center">
             <NavLink to="/" className="flex items-center space-x-2">
@@ -230,7 +230,7 @@ const Navbar = () => {
                         isActive
                           ? "text-emerald-500"
                           : theme === "light"
-                          ? "text-gray-700 hover:text-emerald-500"
+                          ? "text-gray-200 hover:text-emerald-400"
                           : "text-gray-200 hover:text-emerald-400"
                       }`
                     }
