@@ -157,7 +157,7 @@ const AboutPage = () => {
                         <motion.img
                             src={url}
                             alt="Team collaboration"
-                            className={`absolute w-full h-full object-cover ${theme === 'light' ? 'opacity-80' : 'opacity-100'}`}
+                            className={`absolute w-full h-full object-cover ${theme === 'light' ? 'opacity-100' : 'opacity-100'}`}
                             initial={{ scale: 1.3 }}
                             animate={{ scale: 1 }}
                             transition={{ duration: 3, ease: 'easeOut' }}
@@ -166,14 +166,14 @@ const AboutPage = () => {
                 </div>
 
                 <div className="relative z-10 text-center max-w-4xl mx-auto px-4 md:px-8">
-                    <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold ${theme === 'light' ? 'text-gray-800' : 'text-white'
+                    <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold ${theme === 'light' ? 'text-gray-200' : 'text-white'
                         } mb-6 animate-fade-in`}>
                         Transforming Careers with
                         <span className="block bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
                             Arrow Jobs
                         </span>
                     </h1>
-                    <p className={`text-base sm:text-lg md:text-xl lg:text-2xl ${theme === 'light' ? 'text-emerald-700' : 'text-emerald-200'
+                    <p className={`text-base sm:text-lg md:text-xl lg:text-2xl ${theme === 'light' ? 'text-emerald-200' : 'text-emerald-200'
                         } font-light max-w-2xl mx-auto leading-relaxed`}>
                         Pioneering the future of job search with AI-driven solutions and intelligent career guidance
                     </p>
