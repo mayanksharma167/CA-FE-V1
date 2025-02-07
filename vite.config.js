@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     host: true,
     strictPort: true,
-    port: 3000, // Change this to match Render's environment
+    port: 8000, // Change this to match Render's environment
     proxy: {
       "/api": {
         target: "https://your-backend-url.com", // Replace with your backend URL
