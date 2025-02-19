@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import { ChevronDown, ChevronUp, Sun, Moon } from "lucide-react";
-import { ThemeContext } from "../context/themeContext"; // Import your ThemeContext
+import { ThemeContext } from "../context/themeContext";
 
 const Sidebar = ({ handleChange }) => {
-  const { theme, toggleTheme } = useContext(ThemeContext); // Access theme and toggle function
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [selectedOptions, setSelectedOptions] = useState({
     location: "Location",
@@ -14,6 +14,7 @@ const Sidebar = ({ handleChange }) => {
     jobPostingDate: "Date of Posting",
   });
 
+  // Keeping the same options object
   const options = {
     location: [
       { value: "", label: "All" },
@@ -68,67 +69,93 @@ const Sidebar = ({ handleChange }) => {
   };
 
   return (
-    <div
-      className={`h-[calc(100vh-2rem)] overflow-y-auto p-4 lg:pt-14 ${theme === "light" ? "bg-[#bbc4c2] text-gray-800" : "bg-slate-950 text-creamWhite"
-        }`}
-    >
-      <div className="space-y-6">
-        {/* Theme Toggle Button */}
-        <div className="flex justify-between items-center">
-          <h3 className="text-xl font-bold mb-4">Filters</h3>
+    <div className={`h-[calc(100vh-2rem)] relative overflow-y-auto ${theme === "light"
+      ? "bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200"
+      : "bg-gradient-to-br from-gray-900 via-slate-900 to-slate-800"
+      }`}>
 
-        </div>
 
-        {/* Dropdown Filters */}
-        {Object.keys(options).map((key) => (
-          <div
-            key={key}
-            className={`border ${theme === "light" ? "border-gray-400" : "border-emerald-700"
-              } rounded-lg`}
-          >
-            <button
-              onClick={() => toggleDropdown(key)}
-              className={`w-full px-4 py-3 flex items-center justify-between ${theme === "light" ? "hover:bg-gray-200" : "hover:bg-emerald-900"
-                } rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 ${theme === "light" ? "focus:ring-gray-400" : "focus:ring-emerald-500"
-                }`}
-              aria-expanded={isDropdownOpen[key]}
-              aria-controls={`dropdown-${key}`}
-            >
-              <h4 className="text-lg font-medium">{selectedOptions[key]}</h4>
-              {isDropdownOpen[key] ? <ChevronUp /> : <ChevronDown />}
-            </button>
+      {/* Main content */}
+      <div className="relative z-10 p-6 space-y-6 pt-20">
+
+        <div className="space-y-4">
+          {Object.keys(options).map((key) => (
             <div
-              id={`dropdown-${key}`}
-              className={`transition-all duration-300 overflow-hidden ${isDropdownOpen[key] ? "max-h-96 opacity-100 py-4" : "max-h-0 opacity-0 py-0"
+              key={key}
+              className={`rounded-xl overflow-hidden backdrop-blur-sm ${theme === "light"
+                ? "bg-white bg-opacity-70 shadow-lg"
+                : "bg-gray-800 bg-opacity-50 shadow-lg"
                 }`}
             >
-              {options[key].map((option) => (
-                <div
-                  key={option.value}
-                  onClick={() => handleOptionSelect(key, option.value, option.label)}
-                  className={`cursor-pointer px-3 py-2 rounded-md transition-colors duration-300 ${theme === "light" ? "hover:bg-gray-200" : "hover:bg-emerald-800"
-                    } flex items-center gap-2 ${selectedOptions[key] === option.label ? (theme === "light" ? "bg-gray-300" : "bg-emerald-700") : ""
-                    }`}
-                  role="option"
-                  aria-selected={selectedOptions[key] === option.label}
-                >
-                  <input
-                    type="radio"
-                    id={`${key}-${option.value}`}
-                    name={key}
-                    value={option.value}
-                    checked={selectedOptions[key] === option.label}
-                    readOnly
-                    className={`accent-${theme === "light" ? "gray-500" : "emerald-500"}`}
-                  />
-                  <label htmlFor={`${key}-${option.value}`} className="cursor-pointer">
-                    {option.label}
-                  </label>
+              <button
+                onClick={() => toggleDropdown(key)}
+                className={`w-full px-5 py-4 flex items-center justify-between transition-all duration-200 ${theme === "light"
+                  ? "hover:bg-gray-50 text-gray-800"
+                  : "hover:bg-gray-700 text-gray-100"
+                  }`}
+                aria-expanded={isDropdownOpen[key]}
+                aria-controls={`dropdown-${key}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className={`text-lg font-medium ${selectedOptions[key] === options[key][0].label
+                    ? "opacity-60"
+                    : "opacity-100"
+                    }`}>
+                    {selectedOptions[key]}
+                  </span>
                 </div>
-              ))}
+                <div className={`transform transition-transform duration-200 ${isDropdownOpen[key] ? "rotate-180" : ""
+                  }`}>
+                  <ChevronDown size={20} />
+                </div>
+              </button>
+
+              <div
+                id={`dropdown-${key}`}
+                className={`transition-all duration-200 ${isDropdownOpen[key]
+                  ? "max-h-96 opacity-100"
+                  : "max-h-0 opacity-0"
+                  }`}
+              >
+                <div className={`p-3 ${theme === "light"
+                  ? "border-t border-gray-100"
+                  : "border-t border-gray-700"
+                  }`}>
+                  {options[key].map((option) => (
+                    <div
+                      key={option.value}
+                      onClick={() => handleOptionSelect(key, option.value, option.label)}
+                      className={`group flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 ${selectedOptions[key] === option.label
+                        ? theme === "light"
+                          ? "bg-blue-50 text-blue-600"
+                          : "bg-blue-900 bg-opacity-40 text-blue-200"
+                        : theme === "light"
+                          ? "hover:bg-gray-50 text-gray-700"
+                          : "hover:bg-gray-700 text-gray-200"
+                        }`}
+                      role="option"
+                      aria-selected={selectedOptions[key] === option.label}
+                    >
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedOptions[key] === option.label
+                        ? theme === "light"
+                          ? "border-blue-600 bg-blue-600"
+                          : "border-blue-400 bg-blue-400"
+                        : theme === "light"
+                          ? "border-gray-300 group-hover:border-gray-400"
+                          : "border-gray-600 group-hover:border-gray-500"
+                        }`}>
+                        {selectedOptions[key] === option.label && (
+                          <div className="w-2 h-2 rounded-full bg-white" />
+                        )}
+                      </div>
+                      <span className="flex-1">{option.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

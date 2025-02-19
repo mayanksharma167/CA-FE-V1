@@ -43,7 +43,7 @@ const Banner = () => {
 
   return (
     <>
-      <section className={`relative mt-10 overflow-hidden px-5 ${theme === 'light' ? 'bg-[#FAF9F6]' : ''
+      <section className={`relative mt-10 overflow-hidden px-5 ${theme === 'light' ? 'bg-[#FFFFF0]' : ''
         }`}>
         {/* Background with gradient overlay */}
         <div className={`absolute inset-0 ${theme === 'light'
