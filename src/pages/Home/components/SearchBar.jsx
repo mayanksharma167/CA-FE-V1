@@ -49,7 +49,7 @@ const SearchBar = () => {
                 {/* Sidebar Toggle Button */}
                 <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className={`p-2 rounded-lg transition-colors ${theme === "light"
+                    className={`sm:hidden md:hidden lg:hidden xl:hidden xxl:hidden p-2 rounded-lg transition-colors ${theme === "light"
                         ? "bg-gray-100 hover:bg-gray-200"
                         : "bg-gray-800 hover:bg-gray-700"
                         }`}
