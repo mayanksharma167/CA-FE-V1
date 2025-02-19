@@ -10,16 +10,33 @@ export const useJobFiltering = () => {
     itemsPerPage,
   } = useJob();
 
-  const filteredItems = jobs.filter((job) => {
-    const titleMatch = job.jobTitle.toLowerCase().includes(query.toLowerCase());
-    const locationMatch = job.jobLocation
-      .toLowerCase()
-      .includes(locationQuery.toLowerCase());
+  // Safe defaults for query and locationQuery
+  const safeQuery = query ? query.toString() : "";
+  const safeLocationQuery = locationQuery ? locationQuery.toString() : "";
 
-    if (!query && !locationQuery) return true;
-    if (query && !locationQuery) return titleMatch;
-    if (!query && locationQuery) return locationMatch;
-    return titleMatch && locationMatch;
+  const filteredItems = jobs.filter((job) => {
+    // Safe property access with fallback empty string
+    const jobTitle = job.jobTitle ? job.jobTitle.toString() : "";
+    const jobLocation = job.jobLocation ? job.jobLocation.toString() : "";
+    const jobCompanyName = job.companyName ? job.companyName.toString() : ""; // Renamed to avoid conflict
+
+    // Check if query matches either job title OR company name
+    const titleMatch = jobTitle.toLowerCase().includes(safeQuery.toLowerCase());
+    const companyMatch = jobCompanyName
+      .toLowerCase()
+      .includes(safeQuery.toLowerCase());
+    const locationMatch = jobLocation
+      .toLowerCase()
+      .includes(safeLocationQuery.toLowerCase());
+
+    // If no search criteria, include all jobs
+    if (!safeQuery && !safeLocationQuery) return true;
+    // If only searching by query (job title or company), match either
+    if (safeQuery && !safeLocationQuery) return titleMatch || companyMatch;
+    // If only searching by location, match location
+    if (!safeQuery && safeLocationQuery) return locationMatch;
+    // If searching by both, match all criteria
+    return (titleMatch || companyMatch) && locationMatch;
   });
 
   const calculatePageRange = () => {
@@ -31,7 +48,7 @@ export const useJobFiltering = () => {
   const filteredData = () => {
     let filteredJobs = jobs;
 
-    if (query || locationQuery) {
+    if (safeQuery || safeLocationQuery) {
       filteredJobs = filteredItems;
     }
 
@@ -44,13 +61,31 @@ export const useJobFiltering = () => {
           maxPrice,
           postingDate,
           employmentType,
-        }) =>
-          jobLocation.toLowerCase() === selectedCategory.toLowerCase() ||
-          postingDate === selectedCategory ||
-          parseInt(maxPrice) <= parseInt(selectedCategory) ||
-          salaryType.toLowerCase() === selectedCategory.toLowerCase() ||
-          experienceLevel.toLowerCase() === selectedCategory.toLowerCase() ||
-          employmentType.toLowerCase() === selectedCategory.toLowerCase()
+          companyName,
+        }) => {
+          // Safe property checks for selectedCategory filtering
+          const safeJobLocation = jobLocation ? jobLocation.toString() : "";
+          const safeSalaryType = salaryType ? salaryType.toString() : "";
+          const safeExperienceLevel = experienceLevel
+            ? experienceLevel.toString()
+            : "";
+          const safeEmploymentType = employmentType
+            ? employmentType.toString()
+            : "";
+          const safeCompanyName = companyName ? companyName.toString() : "";
+
+          return (
+            safeJobLocation.toLowerCase() === selectedCategory.toLowerCase() ||
+            postingDate === selectedCategory ||
+            (maxPrice && parseInt(maxPrice) <= parseInt(selectedCategory)) ||
+            safeSalaryType.toLowerCase() === selectedCategory.toLowerCase() ||
+            safeExperienceLevel.toLowerCase() ===
+              selectedCategory.toLowerCase() ||
+            safeEmploymentType.toLowerCase() ===
+              selectedCategory.toLowerCase() ||
+            safeCompanyName.toLowerCase() === selectedCategory.toLowerCase()
+          );
+        }
       );
     }
 

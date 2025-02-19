@@ -41,7 +41,7 @@ const SearchBar = () => {
 
                 {/* Search Form */}
                 <form className="flex flex-1 flex-row gap-1 lg:w-[70%]">
-                    {/* Job Title Input */}
+                    {/* Job Title and Company Search Input */}
                     <div className="flex-1 relative">
                         <div className="absolute inset-y-0 left-2 flex items-center pointer-events-none">
                             <FiBriefcase
@@ -55,7 +55,7 @@ const SearchBar = () => {
                                 ? "bg-gray-100 border-gray-200 text-gray-800 placeholder-gray-500 focus:border-emerald-500"
                                 : "bg-gray-800 border-emerald-500/20 text-gray-100 placeholder-gray-400 focus:border-emerald-500"
                                 }`}
-                            placeholder="Search job title..."
+                            placeholder="Search job title or company..."
                             onChange={(e) => setQuery(e.target.value)}
                             value={query}
                         />
