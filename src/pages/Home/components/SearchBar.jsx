@@ -95,7 +95,7 @@ const SearchBar = () => {
                                             }`}
                                         initial={{ opacity: 0, y: 10 }} // Start slightly below
                                         animate={{ opacity: 1, y: -2 }} // Slightly above center
-                                        exit={{ opacity: 0, y: -15 }} // Slide up less when exiting
+                                        exit={{ opacity: 0, y: -12 }} // Slide up less when exiting
                                         transition={{
                                             duration: 0.4,
                                             ease: "easeOut",
