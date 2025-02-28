@@ -145,7 +145,7 @@ const SearchBar = () => {
             initial={{ height: "auto" }}
             animate={{ height: isCollapsed ? "auto" : "auto" }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className={`backdrop-blur-sm border rounded-xl mx-1 sm:mx-2 md:mx-4 py-2 sm:py-4 px-2 sm:px-4 md:px-6 shadow-lg relative z-30 transition-all duration-300 ${
+            className={`backdrop-blur-sm border rounded-xl mx-2 sm:mx-2 md:mx-4 py-2 sm:py-4 px-2 sm:px-4 md:px-6 shadow-lg relative z-30 transition-all duration-300 ${
                 theme === "light"
                     ? "bg-[#bbc4c2] border-gray-200"
                     : "bg-gray-900/50 border-emerald-500/20"
@@ -160,7 +160,7 @@ const SearchBar = () => {
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="flex-1 flex items-center justify-between w-full"
+                            className="flex-1 flex items-center justify-between w-full "
                         >
                             <div className="flex items-center gap-2">
                                 <span className={`text-sm font-medium  ${
