@@ -1,5 +1,5 @@
-import React, { useContext, useState, useEffect } from "react";
-import { FiMapPin, FiBriefcase, FiMenu } from "react-icons/fi";
+import React, { useContext, useState, useEffect, useMemo } from "react";
+import { FiMapPin, FiBriefcase, FiMenu, FiSearch, FiChevronDown, FiChevronUp, FiFilter } from "react-icons/fi";
 import { useJob } from "../contexts/JobContext";
 import { useJobFiltering } from "../hooks/useJobFiltering";
 import { ThemeContext } from "../../../context/themeContext";
@@ -14,136 +14,418 @@ const SearchBar = () => {
         isSidebarOpen,
         setIsSidebarOpen,
         isLoading,
+        jobs,
     } = useJob();
     const { filteredItems } = useJobFiltering();
     const { theme } = useContext(ThemeContext);
 
-    // State for dynamic placeholders
+    const [searchQuery, setSearchQuery] = useState(query);
+    const [companyQuery, setCompanyQuery] = useState(locationQuery);
+    const [titleSuggestions, setTitleSuggestions] = useState([]);
+    const [companySuggestions, setCompanySuggestions] = useState([]);
+    const [showTitleSuggestions, setShowTitleSuggestions] = useState(false);
+    const [showCompanySuggestions, setShowCompanySuggestions] = useState(false);
     const [currentPlaceholderIndex, setCurrentPlaceholderIndex] = useState(0);
-    const placeholders = [
-        "Job role",
-        "Company name",
-        "Microsoft",
-        "Software",
-    ];
+    const [currentCompanyPlaceholderIndex, setCurrentCompanyPlaceholderIndex] = useState(0);
+    const [isCollapsed, setIsCollapsed] = useState(()=>{
+        if (window.innerWidth < 640) {
+            return true;
+        } else {
+            return false;
+        }
+    });
 
-    // Effect to cycle through placeholders every 3 seconds with cleanup
+    const placeholders = ["Job role", "Analyst", "Software", "Developer", "Systems Engineer", "Data Scientist", "Product Manager"]; 
+    const companyPlaceholders = ["Company name", "Microsoft", "Google", "NVIDIA", "Amazon", "Apple","BCG", "McKinsey", "Bain", "Deloitte", "Accenture", "PwC", "EY", "KPMG"];
+
+    // Extract unique job titles and companies
+    const { availableTitles, availableCompanies } = useMemo(() => {
+        const titlesSet = new Set();
+        const companiesSet = new Set();
+
+        jobs.forEach((job) => {
+            const title = job.jobTitle ? job.jobTitle.toString() : "";
+            const company = job.companyName ? job.companyName.toString() : "";
+
+            if (title) titlesSet.add(title);
+            if (company) companiesSet.add(company);
+        });
+
+        const availableTitles = Array.from(titlesSet);
+        const availableCompanies = Array.from(companiesSet);
+
+        return { availableTitles, availableCompanies };
+    }, [jobs]);
+
+    // Cycle through job title placeholders
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentPlaceholderIndex((prev) =>
                 prev === placeholders.length - 1 ? 0 : prev + 1
             );
         }, 3000);
-
-        return () => clearInterval(timer); // Cleanup on unmount
+        return () => clearInterval(timer);
     }, [placeholders.length]);
 
+    // Cycle through company placeholders
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentCompanyPlaceholderIndex((prev) =>
+                prev === companyPlaceholders.length - 1 ? 0 : prev + 1
+            );
+        }, 3000);
+        return () => clearInterval(timer);
+    }, [companyPlaceholders.length]);
+
+    // Handle job title input change
+    const handleTitleQueryChange = (e) => {
+        const value = e.target.value;
+        setSearchQuery(value);
+
+        if (value.length > 0) {
+            const filteredSuggestions = availableTitles
+                .filter((title) =>
+                    title.toLowerCase().includes(value.toLowerCase())
+                )
+                .slice(0, 5);
+            setTitleSuggestions(filteredSuggestions);
+            setShowTitleSuggestions(true);
+        } else {
+            setTitleSuggestions([]);
+            setShowTitleSuggestions(false);
+        }
+    };
+
+    // Handle company input change
+    const handleCompanyQueryChange = (e) => {
+        const value = e.target.value;
+        setCompanyQuery(value);
+
+        if (value.length > 0) {
+            const filteredSuggestions = availableCompanies
+                .filter((company) =>
+                    company.toLowerCase().includes(value.toLowerCase())
+                )
+                .slice(0, 5);
+            setCompanySuggestions(filteredSuggestions);
+            setShowCompanySuggestions(true);
+        } else {
+            setCompanySuggestions([]);
+            setShowCompanySuggestions(false);
+        }
+    };
+
+    const handleTitleSuggestionClick = (suggestion) => {
+        setSearchQuery(suggestion);
+        setShowTitleSuggestions(false);
+        setQuery(suggestion);
+    };
+
+    const handleCompanySuggestionClick = (suggestion) => {
+        setCompanyQuery(suggestion);
+        setShowCompanySuggestions(false);
+        setLocationQuery(suggestion);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setQuery(searchQuery);
+        setLocationQuery(companyQuery);
+        setShowTitleSuggestions(false);
+        setShowCompanySuggestions(false);
+        setIsCollapsed(true); // Collapse after search
+    };
+
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed);
+    };
+
     return (
-        <div
-            className={`backdrop-blur-sm border rounded-xl mx-1 py-4 px-2 lg:p-6 shadow-lg ${theme === "light"
-                ? "bg-[#bbc4c2] border-gray-200"
-                : "bg-gray-900/50 border-emerald-500/20"
-                }`}
+        <motion.div
+            initial={{ height: "auto" }}
+            animate={{ height: isCollapsed ? "auto" : "auto" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className={`backdrop-blur-sm border rounded-xl mx-1 sm:mx-2 md:mx-4 py-2 sm:py-4 px-2 sm:px-4 md:px-6 shadow-lg relative z-30 transition-all duration-300 ${
+                theme === "light"
+                    ? "bg-[#bbc4c2] border-gray-200"
+                    : "bg-gray-900/50 border-emerald-500/20"
+            }`}
         >
-            <div className="flex flex-row items-center justify-between w-full space-x-2">
-                {/* Sidebar Toggle Button */}
-                <button
-                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className={`sm:hidden md:hidden lg:hidden xl:hidden xxl:hidden p-2 rounded-lg transition-colors ${theme === "light"
-                        ? "bg-gray-100 hover:bg-gray-200"
-                        : "bg-gray-800 hover:bg-gray-700"
-                        }`}
-                    aria-label="Toggle sidebar"
-                >
-                    <FiMenu
-                        size={24}
-                        className={
-                            theme === "light" ? "text-emerald-600" : "text-emerald-400"
-                        }
-                    />
-                </button>
+            <div className="flex flex-row items-center justify-between w-full space-x-2 sm:space-x-4 md:space-x-6">
+                {/* Collapsed State */}
+                <AnimatePresence>
+                    {isCollapsed ? (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="flex-1 flex items-center justify-between w-full"
+                        >
+                            <div className="flex items-center gap-2">
+                                <span className={`text-sm font-medium  ${
+                                    theme === "light" ? "text-gray-800" : "text-gray-200"
+                                }`}>
+                                    {searchQuery || companyQuery
+                                        ? `${searchQuery || "Any role"} at ${companyQuery || "Any company"}`
+                                        : "No search criteria"}
+                                </span>
+                                <button
+                                    onClick={toggleCollapse}
+                                    className="p-1 rounded-full hover:bg-gray-700/50 transition-colors"
+                                >
+                                    <FiChevronDown
+                                        size={16}
+                                        className={
+                                            theme === "light" ? "text-emerald-600" : "text-emerald-400"
+                                        }
+                                    />
+                                </button>
+                            </div>
+                            
+                            {/* Mobile: Filter toggle button in collapsed mode */}
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                    className="p-1.5 rounded-lg transition-colors hidden xs:flex"
+                                    aria-label="Toggle filters"
+                                >
+                                    <FiFilter
+                                        size={16}
+                                        className={
+                                            theme === "light" ? "text-emerald-600" : "text-emerald-400"
+                                        }
+                                    />
+                                </button>
+                                <div
+                                    className={`text-xs sm:text-sm font-medium whitespace-nowrap ${
+                                        theme === "light" ? "text-emerald-600" : "text-emerald-400"
+                                    }`}
+                                >
+                                    {isLoading ? "Loading..." : `${filteredItems.length} Jobs`}
+                                </div>
+                            </div>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="flex-1 w-full"
+                        >
+                            <form
+                                onSubmit={handleSubmit}
+                                className="flex flex-col lg:flex-row items-center gap-2 sm:gap-3 w-full"
+                            >
+                                <div className="w-full flex flex-col lg:flex-row gap-2 sm:gap-3">
+                                    {/* Job Title Search Input */}
+                                    <div className="relative flex-1 w-full min-w-0">
+                                        <div className="absolute inset-y-0 left-3 flex items-center">
+                                            <FiBriefcase
+                                                className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                                                    theme === "light" ? "text-emerald-600" : "text-emerald-400"
+                                                }`}
+                                            />
+                                        </div>
+                                        <div className="relative w-full">
+                                            <input
+                                                type="text"
+                                                className={`w-full pl-10 pr-4 py-1.5 sm:py-2 rounded-lg border focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-300 text-xs sm:text-sm outline-none truncate ${
+                                                    theme === "light"
+                                                        ? "bg-white border-gray-300 text-gray-900 placeholder-transparent"
+                                                        : "bg-gray-800 border-gray-700 text-gray-100 placeholder-transparent"
+                                                }`}
+                                                placeholder=""
+                                                onChange={handleTitleQueryChange}
+                                                value={searchQuery}
+                                                onBlur={() => setTimeout(() => setShowTitleSuggestions(false), 200)}
+                                                onFocus={() => searchQuery && setShowTitleSuggestions(true)}
+                                                aria-label="Search job title"
+                                            />
+                                            <AnimatePresence mode="wait">
+                                                {!searchQuery && (
+                                                    <motion.span
+                                                        key={currentPlaceholderIndex}
+                                                        className={`absolute left-10 top-1/3 pointer-events-none text-xs sm:text-sm truncate ${
+                                                            theme === "light" ? "text-gray-500" : "text-gray-400"
+                                                        }`}
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: -2 }}
+                                                        exit={{ opacity: 0, y: -10 }}
+                                                        transition={{
+                                                            duration: 0.4,
+                                                            ease: "easeOut",
+                                                        }}
+                                                        style={{
+                                                            transform: "translateY(-50%)",
+                                                            position: "absolute",
+                                                            maxWidth: "calc(100% - 40px)",
+                                                        }}
+                                                    >
+                                                        {placeholders[currentPlaceholderIndex]}
+                                                    </motion.span>
+                                                )}
+                                            </AnimatePresence>
+                                            <AnimatePresence>
+                                                {showTitleSuggestions && titleSuggestions.length > 0 && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: -10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: -10 }}
+                                                        transition={{ duration: 0.2 }}
+                                                        className={`absolute z-50 w-full mt-1 rounded-lg shadow-lg border ${
+                                                            theme === "light"
+                                                                ? "bg-white border-gray-200"
+                                                                : "bg-gray-800 border-gray-700"
+                                                        }`}
+                                                    >
+                                                        {titleSuggestions.map((suggestion, index) => (
+                                                            <div
+                                                                key={index}
+                                                                onMouseDown={() => handleTitleSuggestionClick(suggestion)}
+                                                                className={`px-4 py-2 cursor-pointer transition-colors duration-200 ${
+                                                                    theme === "light"
+                                                                        ? "hover:bg-gray-100 text-gray-900"
+                                                                        : "hover:bg-gray-700 text-gray-100"
+                                                                }`}
+                                                            >
+                                                                {suggestion}
+                                                            </div>
+                                                        ))}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    </div>
 
-                {/* Search Form */}
-                <form className="flex-1 flex flex-row items-center gap-2">
-                    {/* Job Title and Company Search Input */}
-                    <div className="relative flex-1 min-w-0">
-                        <div className="absolute inset-y-0 left-3 z-20 flex items-center pointer-events-none">
-                            <FiBriefcase
-                                className={`w-5 h-5 ${theme === "light" ? "text-emerald-600" : "text-emerald-400"
-                                    }`}
-                            />
-                        </div>
-                        <div className="relative w-full">
-                            <input
-                                type="text"
-                                className={`w-full pl-10 pr-4 py-2.5 rounded-lg border focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm outline-none truncate ${theme === "light"
-                                    ? "bg-white border-gray-300 text-gray-900 placeholder-transparent"
-                                    : "bg-gray-800 border-gray-700 text-gray-100 placeholder-transparent"
-                                    }`}
-                                placeholder=""
-                                onChange={(e) => setQuery(e.target.value)}
-                                value={query}
-                                aria-label="Search job title or company"
-                            />
-                            <AnimatePresence mode="wait">
-                                {!query && (
-                                    <motion.span
-                                        key={currentPlaceholderIndex}
-                                        className={`absolute left-10 top-1/3 pointer-events-none text-sm truncate ${theme === "light"
-                                            ? "text-gray-500"
-                                            : "text-gray-400"
-                                            }`}
-                                        initial={{ opacity: 0, y: 10 }} // Start slightly below
-                                        animate={{ opacity: 1, y: -2 }} // Slightly above center
-                                        exit={{ opacity: 0, y: -10 }} // Slide up less when exiting
-                                        transition={{
-                                            duration: 0.4,
-                                            ease: "easeOut",
-                                        }}
-                                        style={{
-                                            transform: "translateY(-50%)",
-                                            position: "absolute",
-                                            maxWidth: "calc(100% - 40px)", // Prevent overflow
-                                        }}
+                                    {/* Company Search Input */}
+                                    <div className="relative flex-1 w-full min-w-0">
+                                        <div className="absolute inset-y-0 left-3 flex items-center">
+                                            <FiBriefcase
+                                                className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                                                    theme === "light" ? "text-emerald-600" : "text-emerald-400"
+                                                }`}
+                                            />
+                                        </div>
+                                        <div className="relative w-full">
+                                            <input
+                                                type="text"
+                                                className={`w-full pl-10 pr-4 py-1.5 sm:py-2 rounded-lg border focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-300 text-xs sm:text-sm outline-none truncate ${
+                                                    theme === "light"
+                                                        ? "bg-white border-gray-300 text-gray-900 placeholder-transparent"
+                                                        : "bg-gray-800 border-gray-700 text-gray-100 placeholder-transparent"
+                                                }`}
+                                                placeholder=""
+                                                onChange={handleCompanyQueryChange}
+                                                value={companyQuery}
+                                                onBlur={() => setTimeout(() => setShowCompanySuggestions(false), 200)}
+                                                onFocus={() => companyQuery && setShowCompanySuggestions(true)}
+                                                aria-label="Search company"
+                                            />
+                                            <AnimatePresence mode="wait">
+                                                {!companyQuery && (
+                                                    <motion.span
+                                                        key={currentCompanyPlaceholderIndex}
+                                                        className={`absolute left-10 top-1/3 pointer-events-none text-xs sm:text-sm truncate ${
+                                                            theme === "light" ? "text-gray-500" : "text-gray-400"
+                                                        }`}
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: -2 }}
+                                                        exit={{ opacity: 0, y: -10 }}
+                                                        transition={{
+                                                            duration: 0.4,
+                                                            ease: "easeOut",
+                                                        }}
+                                                        style={{
+                                                            transform: "translateY(-50%)",
+                                                            position: "absolute",
+                                                            maxWidth: "calc(100% - 40px)",
+                                                        }}
+                                                    >
+                                                        {companyPlaceholders[currentCompanyPlaceholderIndex]}
+                                                    </motion.span>
+                                                )}
+                                            </AnimatePresence>
+                                            <AnimatePresence>
+                                                {showCompanySuggestions && companySuggestions.length > 0 && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: -10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: -10 }}
+                                                        transition={{ duration: 0.2 }}
+                                                        className={`absolute z-50 w-full mt-1 rounded-lg shadow-lg border ${
+                                                            theme === "light"
+                                                                ? "bg-white border-gray-200"
+                                                                : "bg-gray-800 border-gray-700"
+                                                        }`}
+                                                    >
+                                                        {companySuggestions.map((suggestion, index) => (
+                                                            <div
+                                                                key={index}
+                                                                onMouseDown={() => handleCompanySuggestionClick(suggestion)}
+                                                                className={`px-4 py-2 cursor-pointer transition-colors duration-200 ${
+                                                                    theme === "light"
+                                                                        ? "hover:bg-gray-100 text-gray-900"
+                                                                        : "hover:bg-gray-700 text-gray-100"
+                                                                }`}
+                                                            >
+                                                                {suggestion}
+                                                            </div>
+                                                        ))}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Mobile: Action Buttons Row */}
+                                <div className="flex w-full lg:w-auto gap-2">
+                                    {/* Filter Toggle Button for mobile */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                        className={`p-2 sm:p-2.5 rounded-lg transition-all duration-300 flex items-center justify-center lg:hidden ${
+                                            theme === "light"
+                                                ? "bg-white hover:bg-gray-100 text-emerald-600 border border-gray-300"
+                                                : "bg-gray-800 hover:bg-gray-700 text-emerald-400 border border-gray-700"
+                                        }`}
+                                        aria-label="Toggle filters"
                                     >
-                                        {placeholders[currentPlaceholderIndex]}
-                                    </motion.span>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
+                                        <FiFilter size={16} />
+                                    </button>
 
-                    {/* Location Input */}
-                    <div className="relative flex-1 min-w-0">
-                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                            <FiMapPin
-                                className={`w-5 h-5 ${theme === "light" ? "text-emerald-600" : "text-emerald-400"
-                                    }`}
-                            />
-                        </div>
-                        <input
-                            type="text"
-                            className={`w-full pl-10 pr-4 py-2.5 rounded-lg border focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm outline-none truncate ${theme === "light"
-                                ? "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                                : "bg-gray-800 border-gray-700 text-gray-100 placeholder-gray-400"
+                                    {/* Search Button */}
+                                    <button
+                                        type="submit"
+                                        className={`p-2 sm:p-2.5 rounded-lg transition-all duration-300 flex items-center gap-1 w-full justify-center ${
+                                            theme === "light"
+                                                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                                                : "bg-emerald-500 hover:bg-emerald-600 text-white"
+                                        }`}
+                                        aria-label="Search jobs"
+                                    >
+                                        <FiSearch size={16} className="sm:size-20" />
+                                        <span className="text-xs sm:text-sm">Search</span>
+                                    </button>
+                                </div>
+                                 {/* Job count (now repositioned) */}
+                            <div
+                                className={`text-xs text-center mt-2 sm:text-sm font-medium ${
+                                    theme === "light" ? "text-emerald-600" : "text-emerald-400"
                                 }`}
-                            placeholder="Location..."
-                            onChange={(e) => setLocationQuery(e.target.value)}
-                            value={locationQuery}
-                            aria-label="Search location"
-                        />
-                    </div>
-                </form>
+                            >
+                                {isLoading ? "Loading jobs..." : `${filteredItems.length} Jobs`}
+                            </div>
+                            </form>
 
-                {/* Job Count */}
-                <div
-                    className={`text-sm font-medium whitespace-nowrap ${theme === "light" ? "text-emerald-600" : "text-emerald-400"
-                        }`}
-                >
-                    {isLoading ? "Loading jobs..." : `${filteredItems.length} Jobs`}
-                </div>
+                            
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

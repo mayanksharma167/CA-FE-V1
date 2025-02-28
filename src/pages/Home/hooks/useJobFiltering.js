@@ -1,100 +1,104 @@
+import { useState, useEffect } from "react";
 import { useJob } from "../contexts/JobContext";
 
 export const useJobFiltering = () => {
-  const {
-    jobs,
-    query,
-    locationQuery,
-    selectedCategory,
-    currentPage,
-    itemsPerPage,
-  } = useJob();
+    const {
+        jobs,
+        query,
+        locationQuery, // Now used for company search
+        selectedCategory,
+        currentPage,
+        itemsPerPage,
+    } = useJob();
 
-  // Safe defaults for query and locationQuery
-  const safeQuery = query ? query.toString() : "";
-  const safeLocationQuery = locationQuery ? locationQuery.toString() : "";
+    // Safe defaults for query and locationQuery
+    const safeQuery = query ? query.toString() : "";
+    const safeLocationQuery = locationQuery ? locationQuery.toString() : "";
 
-  const filteredItems = jobs.filter((job) => {
-    // Safe property access with fallback empty string
-    const jobTitle = job.jobTitle ? job.jobTitle.toString() : "";
-    const jobLocation = job.jobLocation ? job.jobLocation.toString() : "";
-    const jobCompanyName = job.companyName ? job.companyName.toString() : ""; // Renamed to avoid conflict
+    // Filter jobs based on job role (query) and company (locationQuery)
+    const filteredItems = jobs.filter((job) => {
+        // Safe property access with fallback empty string
+        const jobTitle = job.jobTitle ? job.jobTitle.toString() : "";
+        const jobCompanyName = job.companyName ? job.companyName.toString() : "";
 
-    // Check if query matches either job title OR company name
-    const titleMatch = jobTitle.toLowerCase().includes(safeQuery.toLowerCase());
-    const companyMatch = jobCompanyName
-      .toLowerCase()
-      .includes(safeQuery.toLowerCase());
-    const locationMatch = jobLocation
-      .toLowerCase()
-      .includes(safeLocationQuery.toLowerCase());
+        // Job role (query) should only match jobTitle
+        const titleMatch =
+            !safeQuery || // If no query, match all
+            jobTitle.toLowerCase().includes(safeQuery.toLowerCase());
 
-    // If no search criteria, include all jobs
-    if (!safeQuery && !safeLocationQuery) return true;
-    // If only searching by query (job title or company), match either
-    if (safeQuery && !safeLocationQuery) return titleMatch || companyMatch;
-    // If only searching by location, match location
-    if (!safeQuery && safeLocationQuery) return locationMatch;
-    // If searching by both, match all criteria
-    return (titleMatch || companyMatch) && locationMatch;
-  });
+        // Company (locationQuery) should only match companyName
+        const companyMatch =
+            !safeLocationQuery || // If no company query, match all
+            jobCompanyName.toLowerCase().includes(safeLocationQuery.toLowerCase());
 
-  const calculatePageRange = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return { startIndex, endIndex };
-  };
+        // If no search criteria, include all jobs
+        if (!safeQuery && !safeLocationQuery) return true;
 
-  const filteredData = () => {
-    let filteredJobs = jobs;
+        // If only searching by job role, match title
+        if (safeQuery && !safeLocationQuery) return titleMatch;
 
-    if (safeQuery || safeLocationQuery) {
-      filteredJobs = filteredItems;
-    }
+        // If only searching by company, match company
+        if (!safeQuery && safeLocationQuery) return companyMatch;
 
-    if (selectedCategory) {
-      filteredJobs = filteredJobs.filter(
-        ({
-          jobLocation,
-          salaryType,
-          experienceLevel,
-          maxPrice,
-          postingDate,
-          employmentType,
-          companyName,
-        }) => {
-          // Safe property checks for selectedCategory filtering
-          const safeJobLocation = jobLocation ? jobLocation.toString() : "";
-          const safeSalaryType = salaryType ? salaryType.toString() : "";
-          const safeExperienceLevel = experienceLevel
-            ? experienceLevel.toString()
-            : "";
-          const safeEmploymentType = employmentType
-            ? employmentType.toString()
-            : "";
-          const safeCompanyName = companyName ? companyName.toString() : "";
+        // If searching by both, match both criteria
+        return titleMatch && companyMatch;
+    });
 
-          return (
-            safeJobLocation.toLowerCase() === selectedCategory.toLowerCase() ||
-            postingDate === selectedCategory ||
-            (maxPrice && parseInt(maxPrice) <= parseInt(selectedCategory)) ||
-            safeSalaryType.toLowerCase() === selectedCategory.toLowerCase() ||
-            safeExperienceLevel.toLowerCase() ===
-              selectedCategory.toLowerCase() ||
-            safeEmploymentType.toLowerCase() ===
-              selectedCategory.toLowerCase() ||
-            safeCompanyName.toLowerCase() === selectedCategory.toLowerCase()
-          );
+    const calculatePageRange = () => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return { startIndex, endIndex };
+    };
+
+    const filteredData = () => {
+        let filteredJobs = jobs;
+
+        // Apply search filters (job role and company)
+        if (safeQuery || safeLocationQuery) {
+            filteredJobs = filteredItems;
         }
-      );
-    }
 
-    const { startIndex, endIndex } = calculatePageRange();
-    return filteredJobs.slice(startIndex, endIndex);
-  };
+        // Apply category filters if selectedCategory exists
+        if (selectedCategory) {
+            filteredJobs = filteredJobs.filter(
+                ({
+                    jobLocation,
+                    salaryType,
+                    experienceLevel,
+                    maxPrice,
+                    postingDate,
+                    employmentType,
+                    companyName,
+                }) => {
+                    const safeJobLocation = jobLocation ? jobLocation.toString() : "";
+                    const safeSalaryType = salaryType ? salaryType.toString() : "";
+                    const safeExperienceLevel = experienceLevel
+                        ? experienceLevel.toString()
+                        : "";
+                    const safeEmploymentType = employmentType
+                        ? employmentType.toString()
+                        : "";
+                    const safeCompanyName = companyName ? companyName.toString() : "";
 
-  return {
-    filteredItems,
-    filteredData,
-  };
+                    return (
+                        safeJobLocation.toLowerCase() === selectedCategory.toLowerCase() ||
+                        postingDate === selectedCategory ||
+                        (maxPrice && parseInt(maxPrice) <= parseInt(selectedCategory)) ||
+                        safeSalaryType.toLowerCase() === selectedCategory.toLowerCase() ||
+                        safeExperienceLevel.toLowerCase() === selectedCategory.toLowerCase() ||
+                        safeEmploymentType.toLowerCase() === selectedCategory.toLowerCase() ||
+                        safeCompanyName.toLowerCase() === selectedCategory.toLowerCase()
+                    );
+                }
+            );
+        }
+
+        const { startIndex, endIndex } = calculatePageRange();
+        return filteredJobs.slice(startIndex, endIndex);
+    };
+
+    return {
+        filteredItems,
+        filteredData,
+    };
 };
