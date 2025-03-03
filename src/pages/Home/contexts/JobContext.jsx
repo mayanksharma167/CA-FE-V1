@@ -17,7 +17,6 @@ export const JobProvider = ({ children }) => {
     const [hasMore, setHasMore] = useState(true);
     const [limit] = useState(10);
     
-    // Function to fetch jobs with query parameters
     const fetchJobs = async (page = 1, jobTitle = query, companyName = locationQuery) => {
         setIsLoading(true);
         const token = localStorage.getItem("token");
@@ -43,7 +42,6 @@ export const JobProvider = ({ children }) => {
             const data = await response.json();
             
             if (data.success) {
-                // Reset jobs array when performing a new search
                 setJobs(data.data);
                 setCurrentPage(data.pagination.currentPage);
                 setTotalPages(data.pagination.totalPages);
@@ -63,52 +61,50 @@ export const JobProvider = ({ children }) => {
         }
     };
     
-    // Function to fetch more jobs for infinite scrolling
-    const fetchMoreJobs = useCallback(async () => {
-        if (isLoading || currentPage >= totalPages) return;
-        
-        setIsLoading(true);
-        const token = localStorage.getItem("token");
-        const nextPage = currentPage + 1;
-        
-        try {
-            const url = new URL(`${import.meta.env.VITE_BACKEND_URI}/api/v1/jobs/all-jobs`);
-            const params = {
-                page: nextPage,
-                limit,
-                ...(query && { jobtitle: query.trim() }),
-                ...(locationQuery && { companyname: locationQuery.trim() }),
-            };
-            url.search = new URLSearchParams(params).toString();
-            
-            const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                // Append new jobs to existing jobs array
-                setJobs(prevJobs => [...prevJobs, ...data.data]);
-                setCurrentPage(nextPage);
-                setHasMore(nextPage < data.pagination.totalPages);
-            } else {
-                setHasMore(false);
-                console.error("Unexpected data format:", data);
-            }
-        } catch (error) {
-            console.error("Error fetching more jobs:", error);
+const fetchMoreJobs = useCallback(async (triggerIndex) => {
+
+    if (isLoading || currentPage >= totalPages || triggerIndex > jobs.length - 4) return;
+
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+    const nextPage = currentPage + 1;
+
+    try {
+        const url = new URL(`${import.meta.env.VITE_BACKEND_URI}/api/v1/jobs/all-jobs`);
+        const params = {
+            page: nextPage,
+            limit,
+            ...(query && { jobtitle: query.trim() }),
+            ...(locationQuery && { companyname: locationQuery.trim() }),
+        };
+        url.search = new URLSearchParams(params).toString();
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            setJobs(prevJobs => [...prevJobs, ...data.data]);
+            setCurrentPage(nextPage);
+            setHasMore(nextPage < data.pagination.totalPages);
+        } else {
             setHasMore(false);
-        } finally {
-            setIsLoading(false);
+            console.error("Unexpected data format:", data);
         }
-    }, [currentPage, isLoading, limit, locationQuery, query, totalPages]);
+    } catch (error) {
+        console.error("Error fetching more jobs:", error);
+        setHasMore(false);
+    } finally {
+        setIsLoading(false);
+    }
+}, [currentPage, isLoading, limit, locationQuery, query, totalPages, jobs.length]);
     
-    // Reset and fetch initial jobs when search parameters change
     useEffect(() => {
         setCurrentPage(1);
         setJobs([]);
