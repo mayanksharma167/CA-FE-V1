@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect, useMemo } from "react";
 import { FiMapPin, FiBriefcase, FiMenu, FiSearch, FiChevronDown, FiChevronUp, FiFilter } from "react-icons/fi";
 import { useJob } from "../contexts/JobContext";
-import { useJobFiltering } from "../hooks/useJobFiltering";
 import { ThemeContext } from "../../../context/themeContext";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -15,8 +14,9 @@ const SearchBar = () => {
         setIsSidebarOpen,
         isLoading,
         jobs,
+        fetchJobs,
+        currentPage,
     } = useJob();
-    const { filteredItems } = useJobFiltering();
     const { theme } = useContext(ThemeContext);
 
     const [searchQuery, setSearchQuery] = useState(query);
@@ -27,18 +27,11 @@ const SearchBar = () => {
     const [showCompanySuggestions, setShowCompanySuggestions] = useState(false);
     const [currentPlaceholderIndex, setCurrentPlaceholderIndex] = useState(0);
     const [currentCompanyPlaceholderIndex, setCurrentCompanyPlaceholderIndex] = useState(0);
-    const [isCollapsed, setIsCollapsed] = useState(()=>{
-        if (window.innerWidth < 640) {
-            return true;
-        } else {
-            return false;
-        }
-    });
+    const [isCollapsed, setIsCollapsed] = useState(() => window.innerWidth < 640);
 
-    const placeholders = ["Job role", "Analyst", "Software", "Developer", "Systems Engineer", "Data Scientist", "Product Manager"]; 
-    const companyPlaceholders = ["Company name", "Microsoft", "Google", "NVIDIA", "Amazon", "Apple","BCG", "McKinsey", "Bain", "Deloitte", "Accenture", "PwC", "EY", "KPMG"];
+    const placeholders = ["Job role", "Analyst", "Software", "Developer", "Systems Engineer", "Data Scientist", "Product Manager"];
+    const companyPlaceholders = ["Company name", "Microsoft", "Google", "NVIDIA", "Amazon", "Apple", "BCG", "McKinsey", "Bain", "Deloitte", "Accenture", "PwC", "EY", "KPMG"];
 
-    // Extract unique job titles and companies
     const { availableTitles, availableCompanies } = useMemo(() => {
         const titlesSet = new Set();
         const companiesSet = new Set();
@@ -51,42 +44,33 @@ const SearchBar = () => {
             if (company) companiesSet.add(company);
         });
 
-        const availableTitles = Array.from(titlesSet);
-        const availableCompanies = Array.from(companiesSet);
-
-        return { availableTitles, availableCompanies };
+        return {
+            availableTitles: Array.from(titlesSet),
+            availableCompanies: Array.from(companiesSet),
+        };
     }, [jobs]);
 
-    // Cycle through job title placeholders
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentPlaceholderIndex((prev) =>
-                prev === placeholders.length - 1 ? 0 : prev + 1
-            );
+            setCurrentPlaceholderIndex((prev) => (prev === placeholders.length - 1 ? 0 : prev + 1));
         }, 3000);
         return () => clearInterval(timer);
     }, [placeholders.length]);
 
-    // Cycle through company placeholders
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentCompanyPlaceholderIndex((prev) =>
-                prev === companyPlaceholders.length - 1 ? 0 : prev + 1
-            );
+            setCurrentCompanyPlaceholderIndex((prev) => (prev === companyPlaceholders.length - 1 ? 0 : prev + 1));
         }, 3000);
         return () => clearInterval(timer);
     }, [companyPlaceholders.length]);
 
-    // Handle job title input change
     const handleTitleQueryChange = (e) => {
-        const value = e.target.value;
+        const value = e.target.value; // Do not trim or modify here to preserve user input
         setSearchQuery(value);
 
         if (value.length > 0) {
             const filteredSuggestions = availableTitles
-                .filter((title) =>
-                    title.toLowerCase().includes(value.toLowerCase())
-                )
+                .filter((title) => title.toLowerCase().includes(value.toLowerCase()))
                 .slice(0, 5);
             setTitleSuggestions(filteredSuggestions);
             setShowTitleSuggestions(true);
@@ -96,16 +80,13 @@ const SearchBar = () => {
         }
     };
 
-    // Handle company input change
     const handleCompanyQueryChange = (e) => {
-        const value = e.target.value;
+        const value = e.target.value; // Do not trim or modify here to preserve user input
         setCompanyQuery(value);
 
         if (value.length > 0) {
             const filteredSuggestions = availableCompanies
-                .filter((company) =>
-                    company.toLowerCase().includes(value.toLowerCase())
-                )
+                .filter((company) => company.toLowerCase().includes(value.toLowerCase()))
                 .slice(0, 5);
             setCompanySuggestions(filteredSuggestions);
             setShowCompanySuggestions(true);
@@ -118,41 +99,40 @@ const SearchBar = () => {
     const handleTitleSuggestionClick = (suggestion) => {
         setSearchQuery(suggestion);
         setShowTitleSuggestions(false);
-        setQuery(suggestion);
     };
 
     const handleCompanySuggestionClick = (suggestion) => {
         setCompanyQuery(suggestion);
         setShowCompanySuggestions(false);
-        setLocationQuery(suggestion);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setQuery(searchQuery);
-        setLocationQuery(companyQuery);
+        const trimmedSearchQuery = searchQuery.trim(); // Trim on submission
+        const trimmedCompanyQuery = companyQuery.trim(); // Trim on submission
+        setQuery(trimmedSearchQuery);
+        setLocationQuery(trimmedCompanyQuery);
+        fetchJobs(1, trimmedSearchQuery, trimmedCompanyQuery); // Use trimmed values
         setShowTitleSuggestions(false);
         setShowCompanySuggestions(false);
-        setIsCollapsed(true); // Collapse after search
+        setIsCollapsed(true);
     };
 
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
 
+    // Rest of the JSX remains unchanged
     return (
         <motion.div
             initial={{ height: "auto" }}
             animate={{ height: isCollapsed ? "auto" : "auto" }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className={`backdrop-blur-sm border rounded-xl mx-2 sm:mx-2 md:mx-4 py-2 sm:py-4 px-2 sm:px-4 md:px-6 shadow-lg relative z-30 transition-all duration-300 ${
-                theme === "light"
-                    ? "bg-[#bbc4c2] border-gray-200"
-                    : "bg-gray-900/50 border-emerald-500/20"
+                theme === "light" ? "bg-[#bbc4c2] border-gray-200" : "bg-gray-900/50 border-emerald-500/20"
             }`}
         >
             <div className="flex flex-row items-center justify-between w-full space-x-2 sm:space-x-4 md:space-x-6">
-                {/* Collapsed State */}
                 <AnimatePresence>
                     {isCollapsed ? (
                         <motion.div
@@ -160,49 +140,28 @@ const SearchBar = () => {
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="flex-1 flex items-center justify-between w-full "
+                            className="flex-1 flex items-center justify-between w-full"
                         >
                             <div className="flex items-center gap-2">
-                                <span className={`text-sm font-medium  ${
-                                    theme === "light" ? "text-gray-800" : "text-gray-200"
-                                }`}>
+                                <span className={`text-sm font-medium ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>
                                     {searchQuery || companyQuery
                                         ? `${searchQuery || "Any role"} at ${companyQuery || "Any company"}`
                                         : "No search criteria"}
                                 </span>
-                                <button
-                                    onClick={toggleCollapse}
-                                    className="p-1 rounded-full hover:bg-gray-700/50 transition-colors"
-                                >
-                                    <FiChevronDown
-                                        size={16}
-                                        className={
-                                            theme === "light" ? "text-emerald-600" : "text-emerald-400"
-                                        }
-                                    />
+                                <button onClick={toggleCollapse} className="p-1 rounded-full hover:bg-gray-700/50 transition-colors">
+                                    <FiChevronDown size={16} className={theme === "light" ? "text-emerald-600" : "text-emerald-400"} />
                                 </button>
                             </div>
-                            
-                            {/* Mobile: Filter toggle button in collapsed mode */}
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                                     className="p-1.5 rounded-lg transition-colors hidden xs:flex"
                                     aria-label="Toggle filters"
                                 >
-                                    <FiFilter
-                                        size={16}
-                                        className={
-                                            theme === "light" ? "text-emerald-600" : "text-emerald-400"
-                                        }
-                                    />
+                                    <FiFilter size={16} className={theme === "light" ? "text-emerald-600" : "text-emerald-400"} />
                                 </button>
-                                <div
-                                    className={`text-xs sm:text-sm font-medium whitespace-nowrap ${
-                                        theme === "light" ? "text-emerald-600" : "text-emerald-400"
-                                    }`}
-                                >
-                                    {isLoading ? "Loading..." : `${filteredItems.length} Jobs`}
+                                <div className={`text-xs sm:text-sm font-medium whitespace-nowrap ${theme === "light" ? "text-emerald-600" : "text-emerald-400"}`}>
+                                    {isLoading ? "Loading..." : `${jobs.length} Jobs`}
                                 </div>
                             </div>
                         </motion.div>
@@ -214,19 +173,11 @@ const SearchBar = () => {
                             transition={{ duration: 0.3 }}
                             className="flex-1 w-full"
                         >
-                            <form
-                                onSubmit={handleSubmit}
-                                className="flex flex-col lg:flex-row items-center gap-2 sm:gap-3 w-full"
-                            >
+                            <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row items-center gap-2 sm:gap-3 w-full">
                                 <div className="w-full flex flex-col lg:flex-row gap-2 sm:gap-3">
-                                    {/* Job Title Search Input */}
                                     <div className="relative flex-1 w-full min-w-0">
                                         <div className="absolute inset-y-0 left-3 flex items-center">
-                                            <FiBriefcase
-                                                className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                                                    theme === "light" ? "text-emerald-600" : "text-emerald-400"
-                                                }`}
-                                            />
+                                            <FiBriefcase className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === "light" ? "text-emerald-600" : "text-emerald-400"}`} />
                                         </div>
                                         <div className="relative w-full">
                                             <input
@@ -247,21 +198,12 @@ const SearchBar = () => {
                                                 {!searchQuery && (
                                                     <motion.span
                                                         key={currentPlaceholderIndex}
-                                                        className={`absolute left-10 top-1/3 pointer-events-none text-xs sm:text-sm truncate ${
-                                                            theme === "light" ? "text-gray-500" : "text-gray-400"
-                                                        }`}
+                                                        className={`absolute left-10 top-1/3 pointer-events-none text-xs sm:text-sm truncate ${theme === "light" ? "text-gray-500" : "text-gray-400"}`}
                                                         initial={{ opacity: 0, y: 10 }}
                                                         animate={{ opacity: 1, y: -2 }}
                                                         exit={{ opacity: 0, y: -10 }}
-                                                        transition={{
-                                                            duration: 0.4,
-                                                            ease: "easeOut",
-                                                        }}
-                                                        style={{
-                                                            transform: "translateY(-50%)",
-                                                            position: "absolute",
-                                                            maxWidth: "calc(100% - 40px)",
-                                                        }}
+                                                        transition={{ duration: 0.4, ease: "easeOut" }}
+                                                        style={{ transform: "translateY(-50%)", position: "absolute", maxWidth: "calc(100% - 40px)" }}
                                                     >
                                                         {placeholders[currentPlaceholderIndex]}
                                                     </motion.span>
@@ -274,21 +216,13 @@ const SearchBar = () => {
                                                         animate={{ opacity: 1, y: 0 }}
                                                         exit={{ opacity: 0, y: -10 }}
                                                         transition={{ duration: 0.2 }}
-                                                        className={`absolute z-50 w-full mt-1 rounded-lg shadow-lg border ${
-                                                            theme === "light"
-                                                                ? "bg-white border-gray-200"
-                                                                : "bg-gray-800 border-gray-700"
-                                                        }`}
+                                                        className={`absolute z-50 w-full mt-1 rounded-lg shadow-lg border ${theme === "light" ? "bg-white border-gray-200" : "bg-gray-800 border-gray-700"}`}
                                                     >
                                                         {titleSuggestions.map((suggestion, index) => (
                                                             <div
                                                                 key={index}
                                                                 onMouseDown={() => handleTitleSuggestionClick(suggestion)}
-                                                                className={`px-4 py-2 cursor-pointer transition-colors duration-200 ${
-                                                                    theme === "light"
-                                                                        ? "hover:bg-gray-100 text-gray-900"
-                                                                        : "hover:bg-gray-700 text-gray-100"
-                                                                }`}
+                                                                className={`px-4 py-2 cursor-pointer transition-colors duration-200 ${theme === "light" ? "hover:bg-gray-100 text-gray-900" : "hover:bg-gray-700 text-gray-100"}`}
                                                             >
                                                                 {suggestion}
                                                             </div>
@@ -299,14 +233,9 @@ const SearchBar = () => {
                                         </div>
                                     </div>
 
-                                    {/* Company Search Input */}
                                     <div className="relative flex-1 w-full min-w-0">
                                         <div className="absolute inset-y-0 left-3 flex items-center">
-                                            <FiBriefcase
-                                                className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                                                    theme === "light" ? "text-emerald-600" : "text-emerald-400"
-                                                }`}
-                                            />
+                                            <FiBriefcase className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === "light" ? "text-emerald-600" : "text-emerald-400"}`} />
                                         </div>
                                         <div className="relative w-full">
                                             <input
@@ -327,21 +256,12 @@ const SearchBar = () => {
                                                 {!companyQuery && (
                                                     <motion.span
                                                         key={currentCompanyPlaceholderIndex}
-                                                        className={`absolute left-10 top-1/3 pointer-events-none text-xs sm:text-sm truncate ${
-                                                            theme === "light" ? "text-gray-500" : "text-gray-400"
-                                                        }`}
+                                                        className={`absolute left-10 top-1/3 pointer-events-none text-xs sm:text-sm truncate ${theme === "light" ? "text-gray-500" : "text-gray-400"}`}
                                                         initial={{ opacity: 0, y: 10 }}
                                                         animate={{ opacity: 1, y: -2 }}
                                                         exit={{ opacity: 0, y: -10 }}
-                                                        transition={{
-                                                            duration: 0.4,
-                                                            ease: "easeOut",
-                                                        }}
-                                                        style={{
-                                                            transform: "translateY(-50%)",
-                                                            position: "absolute",
-                                                            maxWidth: "calc(100% - 40px)",
-                                                        }}
+                                                        transition={{ duration: 0.4, ease: "easeOut" }}
+                                                        style={{ transform: "translateY(-50%)", position: "absolute", maxWidth: "calc(100% - 40px)" }}
                                                     >
                                                         {companyPlaceholders[currentCompanyPlaceholderIndex]}
                                                     </motion.span>
@@ -354,21 +274,13 @@ const SearchBar = () => {
                                                         animate={{ opacity: 1, y: 0 }}
                                                         exit={{ opacity: 0, y: -10 }}
                                                         transition={{ duration: 0.2 }}
-                                                        className={`absolute z-50 w-full mt-1 rounded-lg shadow-lg border ${
-                                                            theme === "light"
-                                                                ? "bg-white border-gray-200"
-                                                                : "bg-gray-800 border-gray-700"
-                                                        }`}
+                                                        className={`absolute z-50 w-full mt-1 rounded-lg shadow-lg border ${theme === "light" ? "bg-white border-gray-200" : "bg-gray-800 border-gray-700"}`}
                                                     >
                                                         {companySuggestions.map((suggestion, index) => (
                                                             <div
                                                                 key={index}
                                                                 onMouseDown={() => handleCompanySuggestionClick(suggestion)}
-                                                                className={`px-4 py-2 cursor-pointer transition-colors duration-200 ${
-                                                                    theme === "light"
-                                                                        ? "hover:bg-gray-100 text-gray-900"
-                                                                        : "hover:bg-gray-700 text-gray-100"
-                                                                }`}
+                                                                className={`px-4 py-2 cursor-pointer transition-colors duration-200 ${theme === "light" ? "hover:bg-gray-100 text-gray-900" : "hover:bg-gray-700 text-gray-100"}`}
                                                             >
                                                                 {suggestion}
                                                             </div>
@@ -380,29 +292,21 @@ const SearchBar = () => {
                                     </div>
                                 </div>
 
-                                {/* Mobile: Action Buttons Row */}
                                 <div className="flex w-full lg:w-auto gap-2">
-                                    {/* Filter Toggle Button for mobile */}
                                     <button
                                         type="button"
                                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                                         className={`p-2 sm:p-2.5 rounded-lg transition-all duration-300 flex items-center justify-center lg:hidden ${
-                                            theme === "light"
-                                                ? "bg-white hover:bg-gray-100 text-emerald-600 border border-gray-300"
-                                                : "bg-gray-800 hover:bg-gray-700 text-emerald-400 border border-gray-700"
+                                            theme === "light" ? "bg-white hover:bg-gray-100 text-emerald-600 border border-gray-300" : "bg-gray-800 hover:bg-gray-700 text-emerald-400 border border-gray-700"
                                         }`}
                                         aria-label="Toggle filters"
                                     >
                                         <FiFilter size={16} />
                                     </button>
-
-                                    {/* Search Button */}
                                     <button
                                         type="submit"
                                         className={`p-2 sm:p-2.5 rounded-lg transition-all duration-300 flex items-center gap-1 w-full justify-center ${
-                                            theme === "light"
-                                                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                                                : "bg-emerald-500 hover:bg-emerald-600 text-white"
+                                            theme === "light" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "bg-emerald-500 hover:bg-emerald-600 text-white"
                                         }`}
                                         aria-label="Search jobs"
                                     >
@@ -410,17 +314,10 @@ const SearchBar = () => {
                                         <span className="text-xs sm:text-sm">Search</span>
                                     </button>
                                 </div>
-                                 {/* Job count (now repositioned) */}
-                            <div
-                                className={`text-xs text-center mt-2 sm:text-sm font-medium ${
-                                    theme === "light" ? "text-emerald-600" : "text-emerald-400"
-                                }`}
-                            >
-                                {isLoading ? "Loading jobs..." : `${filteredItems.length} Jobs`}
-                            </div>
+                                <div className={`text-xs text-center mt-2 sm:text-sm font-medium ${theme === "light" ? "text-emerald-600" : "text-emerald-400"}`}>
+                                    {isLoading ? "Loading jobs..." : `${jobs.length} Jobs`}
+                                </div>
                             </form>
-
-                            
                         </motion.div>
                     )}
                 </AnimatePresence>

@@ -1,21 +1,23 @@
-import React from "react";
+import React from "react"; // Removed useEffect as it's causing a duplicate fetch
 import { useJob } from "../contexts/JobContext";
 
 const Pagination = () => {
-    const { currentPage, setCurrentPage, totalPages } = useJob();
+    const { currentPage, setCurrentPage, totalPages, fetchJobs, query, locationQuery } = useJob();
 
-    // Use the totalPages directly from the API response
-    console.log("Current Page:", currentPage, "Total Pages:", totalPages);
+    // Removed the useEffect hook from here since we're already watching for changes
+    // in the JobContext useEffect. This was causing duplicate fetches.
 
     const nextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
+            // No need to call fetchJobs here as it will be triggered by the useEffect in JobContext
         }
     };
 
     const prevPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
+            // No need to call fetchJobs here as it will be triggered by the useEffect in JobContext
         }
     };
 
@@ -29,7 +31,7 @@ const Pagination = () => {
                 Previous
             </button>
             <span className="text-sm text-emerald-400 font-medium">
-                Page {currentPage} of {totalPages}
+                Page {currentPage} of {totalPages || 1}
             </span>
             <button
                 onClick={nextPage}
