@@ -16,6 +16,7 @@ const SearchBar = () => {
         jobs,
         fetchJobs,
         currentPage,
+        totalJobs = 0, // Add totalJobs with default value
     } = useJob();
     const { theme } = useContext(ThemeContext);
 
@@ -65,7 +66,7 @@ const SearchBar = () => {
     }, [companyPlaceholders.length]);
 
     const handleTitleQueryChange = (e) => {
-        const value = e.target.value; // Do not trim or modify here to preserve user input
+        const value = e.target.value;
         setSearchQuery(value);
 
         if (value.length > 0) {
@@ -81,7 +82,7 @@ const SearchBar = () => {
     };
 
     const handleCompanyQueryChange = (e) => {
-        const value = e.target.value; // Do not trim or modify here to preserve user input
+        const value = e.target.value;
         setCompanyQuery(value);
 
         if (value.length > 0) {
@@ -108,11 +109,11 @@ const SearchBar = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const trimmedSearchQuery = searchQuery.trim(); // Trim on submission
-        const trimmedCompanyQuery = companyQuery.trim(); // Trim on submission
+        const trimmedSearchQuery = searchQuery.trim();
+        const trimmedCompanyQuery = companyQuery.trim();
         setQuery(trimmedSearchQuery);
         setLocationQuery(trimmedCompanyQuery);
-        fetchJobs(1, trimmedSearchQuery, trimmedCompanyQuery); // Use trimmed values
+        fetchJobs(1, trimmedSearchQuery, trimmedCompanyQuery);
         setShowTitleSuggestions(false);
         setShowCompanySuggestions(false);
         setIsCollapsed(true);
@@ -122,7 +123,6 @@ const SearchBar = () => {
         setIsCollapsed(!isCollapsed);
     };
 
-    // Rest of the JSX remains unchanged
     return (
         <motion.div
             initial={{ height: "auto" }}
@@ -161,7 +161,7 @@ const SearchBar = () => {
                                     <FiFilter size={16} className={theme === "light" ? "text-emerald-600" : "text-emerald-400"} />
                                 </button>
                                 <div className={`text-xs sm:text-sm font-medium whitespace-nowrap ${theme === "light" ? "text-emerald-600" : "text-emerald-400"}`}>
-                                    {isLoading ? "Loading..." : `${jobs.length} Jobs`}
+                                    {isLoading ? "Loading..." : `${totalJobs} Total Jobs`}
                                 </div>
                             </div>
                         </motion.div>
@@ -315,7 +315,7 @@ const SearchBar = () => {
                                     </button>
                                 </div>
                                 <div className={`text-xs text-center mt-2 sm:text-sm font-medium ${theme === "light" ? "text-emerald-600" : "text-emerald-400"}`}>
-                                    {isLoading ? "Loading jobs..." : `${jobs.length} Jobs`}
+                                    {`${totalJobs}  Jobs`}
                                 </div>
                             </form>
                         </motion.div>

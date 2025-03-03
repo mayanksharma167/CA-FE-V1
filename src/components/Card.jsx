@@ -1,8 +1,9 @@
 import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { forwardRef } from "react";
 
-const Card = ({ data }) => {
+const Card = forwardRef(({ data }, ref) => {
   const {
     companyLogo,
     jobTitle,
@@ -16,7 +17,7 @@ const Card = ({ data }) => {
   } = data;
 
   return (
-    <div className="w-full lg:w-[85%] mx-auto py-4">
+    <div ref={ref} className="w-full lg:w-[85%] mx-auto py-4">
       <div className="relative bg-gray-100 rounded-xl shadow-lg transition-shadow duration-300 p-6 border border-gray-200 overflow-hidden group hover:shadow-xl">
         {/* Frosted Glass Effect on Hover */}
         <div className="absolute inset-0 bg-gradient-to-r from-gray-100 via-transparent to-gray-200 opacity-0 group-hover:opacity-100 backdrop-blur-md rounded-xl transition-opacity duration-500 pointer-events-none"></div>
@@ -90,6 +91,9 @@ const Card = ({ data }) => {
       </div>
     </div>
   );
-};
+});
+
+// Add display name for forwardRef component
+Card.displayName = "Card";
 
 export default Card;
