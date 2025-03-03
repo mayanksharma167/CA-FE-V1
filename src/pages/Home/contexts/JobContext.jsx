@@ -15,7 +15,7 @@ export const JobProvider = ({ children }) => {
     const [locationQuery, setLocationQuery] = useState("");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-    const [limit] = useState(10);
+    const [limit] = useState(15);
     
     const fetchJobs = async (page = 1, jobTitle = query, companyName = locationQuery) => {
         setIsLoading(true);
