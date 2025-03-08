@@ -14,6 +14,7 @@ const Card = forwardRef(({ data }, ref) => {
     maxPrice,
     postingDate,
     jobUrl,
+    createdAt,
   } = data;
 
   return (
@@ -66,7 +67,9 @@ const Card = forwardRef(({ data }, ref) => {
               </div>
               <div className="flex items-center gap-2">
                 <FiCalendar className="text-slate-900" />
-                <span>Posted: {new Date(postingDate).toLocaleDateString()}</span>
+                <span>
+                  Posted: {new Date(postingDate || createdAt).toLocaleDateString()}
+                </span>
               </div>
             </div>
           </div>
