@@ -17,7 +17,7 @@
     "dotenv": "^16.4.7",
     "esbuild": "^0.24.2",
     "firebase": "^10.14.1",
-    "framer-motion": "^11.15.0",
+    "framer-motion": "^11.18.2",
     "localforage": "^1.10.0",
     "lucide-react": "^0.469.0",
     "match-sorter": "^6.3.1",
@@ -27,6 +27,7 @@
     "react-icons": "^4.11.0",
     "react-router-dom": "^6.18.0",
     "react-select": "^5.7.7",
+    "recharts": "^2.15.1",
     "sort-by": "^1.2.0",
     "sweetalert2": "^11.9.0",
     "typewriter-effect": "^2.21.0"

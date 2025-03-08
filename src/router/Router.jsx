@@ -15,6 +15,7 @@ import AboutPage from "../pages/AboutPage";
 import NotFound from "../pages/NotFound";
 import Resume from "../pages/Resume";
 import CareersPage from "../pages/CareersPage";
+import AdminDashboard from "../pages/AdminDashboard";
 import AIDashboard from "../components/AIDashboard";
 
 const router = createBrowserRouter([
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: "/careers",
         element: <CareersPage />
+      },
+      {
+        path: "/admin",
+        element: <AdminDashboard />
       },
       {
         path: "*",
