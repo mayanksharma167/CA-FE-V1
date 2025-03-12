@@ -42,11 +42,11 @@ const Footer = () => {
                         </h4>
                         <ul className="space-y-4">
                             {[
-                                { name: "Pricing", path: "" },
+
                                 { name: "Explore", path: "/jobs" },
-                                { name: "Team", path: "" },
+                                { name: "Team", path: "about" },
                                 { name: "Careers", path: "/careers" },
-                                { name: "Privacy Policy", path: "" },
+                                { name: "Privacy Policy", path: "/privacy-Policy" },
                             ].map((item) => (
                                 <li key={item.name}>
                                     <Link
@@ -69,14 +69,14 @@ const Footer = () => {
                             <li className="flex justify-center space">
                                 <span>Email:</span>
                                 <a
-                                    href="mailto:contact@CodingArrow.com"
+                                    href="mailto:codingarrowofficial@gmail.com"
                                     className="text-emerald-400 hover:text-emerald-300 transition-colors duration-300"
                                 >
-                                    contact@CodingArrow.com
+                                    codingarrowofficial@gmail.com
                                 </a>
                             </li>
                             <li className="leading-relaxed">
-                                Address: 10th Floor, M3M Cosmopolitan, Badshahpur, Sector 66, Gurugram, Haryana 122002
+                                Address:  Badshahpur, Sector 66, Gurugram, Haryana 122002
                             </li>
                         </ul>
                     </div>

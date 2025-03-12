@@ -17,6 +17,7 @@ import Resume from "../pages/Resume";
 import CareersPage from "../pages/CareersPage";
 import AdminDashboard from "../pages/AdminDashboard";
 import AIDashboard from "../components/AIDashboard";
+import PrivacyPolicy from "../components/PrivacyPolicy";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <AboutPage />
+      },
+      {
+        path: "/privacy-Policy",
+        element: <PrivacyPolicy />
       },
       {
         path: "/ai",

@@ -23,19 +23,6 @@ const Sidebar = ({ handleChange }) => {
       { value: "hyderabad", label: "Hyderabad" },
       { value: "mumbai", label: "Mumbai" },
     ],
-    salaryType: [
-      { value: "", label: "Any" },
-      { value: "hourly", label: "Hourly" },
-      { value: "monthly", label: "Monthly" },
-      { value: "yearly", label: "Yearly" },
-    ],
-    salaryRange: [
-      { value: "", label: "Any" },
-      { value: "30", label: "< 30,000" },
-      { value: "50", label: "< 50,000" },
-      { value: "80", label: "< 80,000" },
-      { value: "100", label: "< 100,000" },
-    ],
     experience: [
       { value: "", label: "Any experience" },
       { value: "Internship", label: "Internship" },

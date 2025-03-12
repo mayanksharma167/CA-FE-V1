@@ -345,51 +345,7 @@ const AboutPage = () => {
                 </div>
             </section>
 
-            {/* Call to Action */}
-            <section className="py-20">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className={`text-3xl md:text-4xl font-bold ${theme === 'light' ? 'text-gray-800' : 'text-white'} mb-6`}>
-                        Ready to Transform Your Career?
-                    </h2>
-                    <p className={`${theme === 'light' ? 'text-gray-600' : 'text-gray-300'} text-lg mb-8`}>
-                        Join thousands of successful professionals who have already discovered the power of AI-driven job search with Arrow Jobs.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                        <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
-                            Get Started Now <ArrowRight className="w-5 h-5" />
-                        </button>
-                        <button className="bg-transparent border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-600/10 px-8 py-3 rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2">
-                            Schedule Demo
-                        </button>
-                    </div>
 
-                    {/* Contact Information */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-                        <div className={`${theme === 'light'
-                            ? 'bg-gradient-to-br from-[#FAF9F6] via-gray-50 to-gray-100 shadow-lg hover:shadow-xl'
-                            : 'bg-gradient-to-br from-gray-800 via-gray-900 to-black'
-                            } p-6 rounded-xl backdrop-blur-sm transition-all duration-300`}>
-                            <div className="flex items-center justify-center gap-3 text-emerald-600 mb-4">
-                                <Phone className="w-5 h-5" />
-                                <span className="font-medium">Contact Support</span>
-                            </div>
-                            <p className={`${theme === 'light' ? 'text-gray-600' : 'text-gray-300'}`}>+1 (888) 123-4567</p>
-                            <p className={`${theme === 'light' ? 'text-gray-500' : 'text-gray-400'} text-sm`}>Available 24/7</p>
-                        </div>
-                        <div className={`${theme === 'light'
-                            ? 'bg-gradient-to-br from-[#FAF9F6] via-gray-50 to-gray-100 shadow-lg hover:shadow-xl'
-                            : 'bg-gradient-to-br from-gray-800 via-gray-900 to-black'
-                            } p-6 rounded-xl backdrop-blur-sm transition-all duration-300`}>
-                            <div className="flex items-center justify-center gap-3 text-emerald-600 mb-4">
-                                <Mail className="w-5 h-5" />
-                                <span className="font-medium">Email Us</span>
-                            </div>
-                            <p className={`${theme === 'light' ? 'text-gray-600' : 'text-gray-300'}`}>support@arrowjobs.com</p>
-                            <p className={`${theme === 'light' ? 'text-gray-500' : 'text-gray-400'} text-sm`}>We'll respond within 24 hours</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </div>
     );
 };
