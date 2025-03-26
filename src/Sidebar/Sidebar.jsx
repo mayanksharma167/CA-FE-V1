@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { ChevronDown, ChevronUp, Sun, Moon } from "lucide-react";
 import { ThemeContext } from "../context/themeContext";
+import { InformationCard, MessageCard } from "../pages/Home/components/info";
 
 const Sidebar = ({ handleChange }) => {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -137,13 +138,32 @@ const Sidebar = ({ handleChange }) => {
                       </div>
                       <span className="flex-1">{option.label}</span>
                     </div>
+                    
                   ))}
+                  
                 </div>
+                
               </div>
             </div>
           ))}
+          {/* Information Card with Dynamic Positioning */}
+          <div 
+                className={`relative left-1 transition-all duration-300 ease-in-out ${
+                    isDropdownOpen 
+                        ? "bottom-[calc(100%-200px)]" // Adjust this value based on your dropdown height
+                        : "bottom-64"
+                }`}
+            >
+                <InformationCard
+                    title="Job Search Tips"
+                    description="Use filters to narrow down your search. Explore different categories and set alerts for new opportunities."
+                />
+                <br />
+                
+            </div>
         </div>
       </div>
+      
     </div>
   );
 };

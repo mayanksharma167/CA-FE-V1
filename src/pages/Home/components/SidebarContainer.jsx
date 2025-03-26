@@ -64,33 +64,16 @@ const SidebarContainer = () => {
                 setIsSidebarOpen={setIsSidebarOpen}
             />
 
-            {/* Information Card with Dynamic Positioning */}
-            <div 
-                className={`absolute left-4 right-4 transition-all duration-300 ease-in-out ${
-                    isDropdownOpen 
-                        ? "bottom-[calc(100%-200px)]" // Adjust this value based on your dropdown height
-                        : "bottom-64"
-                }`}
-            >
-                <InformationCard
-                    title="Job Search Tips"
-                    description="Use filters to narrow down your search. Explore different categories and set alerts for new opportunities."
-                />
-                <br />
-                <div>
-                    <InformationCard
-                        description="These are official job postings from the company's website. Click on the job to apply. Good luck! 🍀"
-                    />
-                </div>
-            </div>
+            
 
             {/* Lottie Animation at Bottom */}
-            <div className="fixed bottom-2 right-4 transform -translate-x-1/2 w-40">
+            <div className="absolute bottom-2 right-4 transform -translate-x-1/2 w-40">
                 <Player
                     autoplay
                     loop
                     src={"/up.json"}
                     style={{ height: "35vh"}}
+                    
                 />
             </div>
         </div>
