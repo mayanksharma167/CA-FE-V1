@@ -98,12 +98,12 @@ const Banner = () => {
       <section className={`relative mt-10 overflow-hidden px-5 ${theme === 'light' ? 'bg-[#FFFFF0]' : ''
         }`}>
         {/* Background with gradient overlay */}
-        <div className={`absolute inset-0 ${theme === 'light'
+        <div className={`fixed inset-0 ${theme === 'light'
           ? 'bg-gradient-to-br from-[#FAF9F6] via-gray-300 to-[#FAF9F6]'
-          : 'bg-gradient-to-br from-zinc-900 via-black to-zinc-900'
+          : 'bg-gradient-to-br from-black via-teal-950 to-black'
           }`}>
-          <div className={`absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMCAxOGMtMy4zMTQgMC02LTIuNjg2LTYtNnMyLjY4Ni02IDYtNiA2IDIuNjg2IDYgNi0yLjY4NiA2LTYgNnoiIGZpbGw9IiMxMGIzODEiIG9wYWNpdHk9IjAuMDUiLz48L2c+PC9zdmc+')] ${theme === 'light' ? 'opacity-20' : 'opacity-10'
-            }`}></div>
+          <div className={`absolute inset-0 bg-[url(https://images.unsplash.com/photo-1698825810716-d3f126a50385?q=80&w=1520&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)] bg-cover bg-center animate-bgSpinScale ${theme === 'light' ? 'opacity-20' : 'opacity-10'}
+}`}></div>
         </div>
 
         {/* Decorative circles with adjusted positioning */}
@@ -446,4 +446,13 @@ const Banner = () => {
   );
 };
 
+
 export default Banner;
+
+
+
+
+
+
+
+

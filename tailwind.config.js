@@ -9,16 +9,15 @@ export default {
         creamWhite: "#FAF9F6",
       },
       animation: {
-        scroll: "scroll 20s linear infinite",
-        // You might want to preserve the bounce-slow animation from your Banner as well
+        scroll: "scroll 30s linear infinite",
         "bounce-slow": "bounce 3s infinite",
+        bgSpinScale: "bgSpinScale 45s linear infinite", // 🔥 added animation
       },
       keyframes: {
         scroll: {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
-        // Adding bounce keyframes to match your animate-bounce-slow class
         bounce: {
           "0%, 100%": {
             transform: "translateY(0)",
@@ -26,6 +25,11 @@ export default {
           "50%": {
             transform: "translateY(-0.5rem)",
           },
+        },
+        bgSpinScale: {
+          "0%": { transform: "scale(1) rotate(0deg)" },
+          "50%": { transform: "scale(3) rotate(60deg)" },
+          "100%": { transform: "scale(2) rotate(360deg)" },
         },
       },
     },
